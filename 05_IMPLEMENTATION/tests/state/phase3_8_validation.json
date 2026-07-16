@@ -1,0 +1,355 @@
+{
+  "phase3_distinct_count": [
+    {
+      "n": 1723
+    }
+  ],
+  "phase3_raw_vs_distinct": [
+    {
+      "raw_count": 1723,
+      "distinct_count": 1723
+    }
+  ],
+  "phase3_txn_row_count_before_join": [
+    {
+      "n": 323752
+    }
+  ],
+  "phase3_txn_row_count_after_join": [
+    {
+      "n": 35623
+    }
+  ],
+  "phase3_duplicate_order_item_info_after_join": [
+    {
+      "dup_groups": 0
+    }
+  ],
+  "canonical_duplicate_check": [
+    {
+      "dup_groups": 0
+    }
+  ],
+  "canonical_included_count": [
+    {
+      "n": 34373,
+      "distinct_n": 34373
+    }
+  ],
+  "month_by_month": [
+    {
+      "month": "2025-01",
+      "fbm_sales": "27640.92",
+      "fba_sales": "6614.77",
+      "included_order_items": 1644,
+      "included_quantity": "2050",
+      "refunded_row_count": 37,
+      "refunded_original_sales": "808.69",
+      "excluded_cancelled_rows": 50,
+      "excluded_cancelled_value": "31.98"
+    },
+    {
+      "month": "2025-02",
+      "fbm_sales": "22392.28",
+      "fba_sales": "6175.60",
+      "included_order_items": 1357,
+      "included_quantity": "1693",
+      "refunded_row_count": 21,
+      "refunded_original_sales": "529.15",
+      "excluded_cancelled_rows": 47,
+      "excluded_cancelled_value": "83.50"
+    },
+    {
+      "month": "2025-03",
+      "fbm_sales": "25974.78",
+      "fba_sales": "5674.35",
+      "included_order_items": 1520,
+      "included_quantity": "1900",
+      "refunded_row_count": 28,
+      "refunded_original_sales": "630.80",
+      "excluded_cancelled_rows": 44,
+      "excluded_cancelled_value": "189.94"
+    },
+    {
+      "month": "2025-04",
+      "fbm_sales": "29721.09",
+      "fba_sales": "9386.50",
+      "included_order_items": 1946,
+      "included_quantity": "2438",
+      "refunded_row_count": 47,
+      "refunded_original_sales": "919.75",
+      "excluded_cancelled_rows": 68,
+      "excluded_cancelled_value": "72.98"
+    },
+    {
+      "month": "2025-05",
+      "fbm_sales": "27813.73",
+      "fba_sales": "10770.56",
+      "included_order_items": 1972,
+      "included_quantity": "2386",
+      "refunded_row_count": 37,
+      "refunded_original_sales": "652.52",
+      "excluded_cancelled_rows": 79,
+      "excluded_cancelled_value": "245.57"
+    },
+    {
+      "month": "2025-06",
+      "fbm_sales": "27797.40",
+      "fba_sales": "9293.56",
+      "included_order_items": 1864,
+      "included_quantity": "2334",
+      "refunded_row_count": 35,
+      "refunded_original_sales": "766.17",
+      "excluded_cancelled_rows": 56,
+      "excluded_cancelled_value": "182.65"
+    },
+    {
+      "month": "2025-07",
+      "fbm_sales": "32679.10",
+      "fba_sales": "17099.58",
+      "included_order_items": 2417,
+      "included_quantity": "2905",
+      "refunded_row_count": 57,
+      "refunded_original_sales": "1366.48",
+      "excluded_cancelled_rows": 84,
+      "excluded_cancelled_value": "114.34"
+    },
+    {
+      "month": "2025-08",
+      "fbm_sales": "33965.18",
+      "fba_sales": "8022.93",
+      "included_order_items": 2171,
+      "included_quantity": "2655",
+      "refunded_row_count": 35,
+      "refunded_original_sales": "631.81",
+      "excluded_cancelled_rows": 65,
+      "excluded_cancelled_value": "87.96"
+    },
+    {
+      "month": "2025-09",
+      "fbm_sales": "34800.30",
+      "fba_sales": "13473.50",
+      "included_order_items": 2401,
+      "included_quantity": "3042",
+      "refunded_row_count": 44,
+      "refunded_original_sales": "1043.48",
+      "excluded_cancelled_rows": 95,
+      "excluded_cancelled_value": "176.89"
+    },
+    {
+      "month": "2025-10",
+      "fbm_sales": "38000.52",
+      "fba_sales": "16619.28",
+      "included_order_items": 2609,
+      "included_quantity": "3316",
+      "refunded_row_count": 64,
+      "refunded_original_sales": "1622.30",
+      "excluded_cancelled_rows": 94,
+      "excluded_cancelled_value": "90.76"
+    },
+    {
+      "month": "2025-11",
+      "fbm_sales": "35321.72",
+      "fba_sales": "17725.14",
+      "included_order_items": 2612,
+      "included_quantity": "3174",
+      "refunded_row_count": 41,
+      "refunded_original_sales": "918.74",
+      "excluded_cancelled_rows": 100,
+      "excluded_cancelled_value": "74.45"
+    },
+    {
+      "month": "2025-12",
+      "fbm_sales": "22062.38",
+      "fba_sales": "13337.34",
+      "included_order_items": 1794,
+      "included_quantity": "2122",
+      "refunded_row_count": 32,
+      "refunded_original_sales": "737.70",
+      "excluded_cancelled_rows": 83,
+      "excluded_cancelled_value": "129.43"
+    },
+    {
+      "month": "2026-01",
+      "fbm_sales": "21749.55",
+      "fba_sales": "7455.78",
+      "included_order_items": 1732,
+      "included_quantity": "2040",
+      "refunded_row_count": 19,
+      "refunded_original_sales": "487.83",
+      "excluded_cancelled_rows": 60,
+      "excluded_cancelled_value": "87.01"
+    },
+    {
+      "month": "2026-02",
+      "fbm_sales": "24035.98",
+      "fba_sales": "8750.34",
+      "included_order_items": 1731,
+      "included_quantity": "2131",
+      "refunded_row_count": 34,
+      "refunded_original_sales": "653.52",
+      "excluded_cancelled_rows": 50,
+      "excluded_cancelled_value": "159.29"
+    },
+    {
+      "month": "2026-03",
+      "fbm_sales": "20508.55",
+      "fba_sales": "9618.77",
+      "included_order_items": 1584,
+      "included_quantity": "1941",
+      "refunded_row_count": 29,
+      "refunded_original_sales": "719.25",
+      "excluded_cancelled_rows": 58,
+      "excluded_cancelled_value": "133.15"
+    },
+    {
+      "month": "2026-04",
+      "fbm_sales": "18273.69",
+      "fba_sales": "7268.22",
+      "included_order_items": 1238,
+      "included_quantity": "1510",
+      "refunded_row_count": 35,
+      "refunded_original_sales": "1079.02",
+      "excluded_cancelled_rows": 52,
+      "excluded_cancelled_value": "153.32"
+    },
+    {
+      "month": "2026-05",
+      "fbm_sales": "18500.01",
+      "fba_sales": "6944.63",
+      "included_order_items": 1306,
+      "included_quantity": "1584",
+      "refunded_row_count": 42,
+      "refunded_original_sales": "925.77",
+      "excluded_cancelled_rows": 41,
+      "excluded_cancelled_value": "79.10"
+    },
+    {
+      "month": "2026-06",
+      "fbm_sales": "18494.15",
+      "fba_sales": "7171.01",
+      "included_order_items": 1334,
+      "included_quantity": "1605",
+      "refunded_row_count": 12,
+      "refunded_original_sales": "411.49",
+      "excluded_cancelled_rows": 68,
+      "excluded_cancelled_value": "2.41"
+    },
+    {
+      "month": "2026-07",
+      "fbm_sales": "6982.54",
+      "fba_sales": "2746.20",
+      "included_order_items": 492,
+      "included_quantity": "589",
+      "refunded_row_count": 0,
+      "refunded_original_sales": "0",
+      "excluded_cancelled_rows": 16,
+      "excluded_cancelled_value": "42.13"
+    }
+  ],
+  "vendor_period_lengths": [
+    {
+      "period_days": "0.04166666666666666667",
+      "n": 837
+    },
+    {
+      "period_days": "28.2916666666666667",
+      "n": 45
+    },
+    {
+      "period_days": "30.0000000000000000",
+      "n": 42
+    },
+    {
+      "period_days": "31.0000000000000000",
+      "n": 36
+    }
+  ],
+  "vendor_overlap_check": [],
+  "vendor_monthly": [
+    {
+      "month": "2025-06",
+      "vendor_sales": 4302.96,
+      "vendor_units": "528",
+      "row_count": 13
+    },
+    {
+      "month": "2025-07",
+      "vendor_sales": 4568.8099999999995,
+      "vendor_units": "571",
+      "row_count": 18
+    },
+    {
+      "month": "2025-08",
+      "vendor_sales": 5107.32,
+      "vendor_units": "618",
+      "row_count": 18
+    },
+    {
+      "month": "2025-09",
+      "vendor_sales": 7510.309999999998,
+      "vendor_units": "860",
+      "row_count": 29
+    },
+    {
+      "month": "2025-10",
+      "vendor_sales": 12290.119999999983,
+      "vendor_units": "1299",
+      "row_count": 130
+    },
+    {
+      "month": "2025-11",
+      "vendor_sales": 5806.959999999973,
+      "vendor_units": "389",
+      "row_count": 326
+    },
+    {
+      "month": "2025-12",
+      "vendor_sales": 1802.9200000000014,
+      "vendor_units": "120",
+      "row_count": 99
+    },
+    {
+      "month": "2026-01",
+      "vendor_sales": 1062.7400000000007,
+      "vendor_units": "76",
+      "row_count": 71
+    },
+    {
+      "month": "2026-02",
+      "vendor_sales": 1232.6800000000005,
+      "vendor_units": "84",
+      "row_count": 69
+    },
+    {
+      "month": "2026-03",
+      "vendor_sales": 617.0600000000002,
+      "vendor_units": "42",
+      "row_count": 39
+    },
+    {
+      "month": "2026-04",
+      "vendor_sales": 599.6400000000002,
+      "vendor_units": "37",
+      "row_count": 34
+    },
+    {
+      "month": "2026-05",
+      "vendor_sales": 935.5800000000003,
+      "vendor_units": "57",
+      "row_count": 57
+    },
+    {
+      "month": "2026-06",
+      "vendor_sales": 571.42,
+      "vendor_units": "41",
+      "row_count": 37
+    },
+    {
+      "month": "2026-07",
+      "vendor_sales": 384.01000000000005,
+      "vendor_units": "25",
+      "row_count": 20
+    }
+  ]
+}

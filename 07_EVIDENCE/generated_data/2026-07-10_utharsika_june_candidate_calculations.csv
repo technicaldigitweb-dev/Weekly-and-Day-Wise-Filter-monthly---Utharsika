@@ -1,0 +1,11 @@
+variant,label,sales_gbp,orders,sales_diff_from_42082_96,orders_diff_from_2412,business_rule,evidence_support
+A,Current UAWSO calculation (FBM+FBA Completed Amazon UK + Vendor Sales; Orders=FBM/FBA distinct order_item_info only),41146.84,1856,-936.12,-556,Approved current UAWSO filter set,Directly reproduced this session
+B,Current Sales; Orders redefined as FBM/FBA Orders + Vendor Units,41146.84,2384,-936.12,-28,Non-standard Orders definition combining two different unit types,Reproduced; not the approved Orders definition
+C,All non-cancelled (excludes only 'Cancelled') Amazon UK rows + Vendor,41187.82,2426,-895.14,+14,Includes Refunded and 'Canceled' (single-L) as valid,Reproduced; not an approved status inclusion
+D,All statuses (Completed+Cancelled+Refunded+Canceled) Amazon UK + Vendor,41383.02,2475,-699.94,+63,Includes non-Completed rows entirely,Reproduced; contradicts approved order_status='Completed' filter
+E,Amazon UK plus blank-marketplace rows + Vendor,41146.84,2384,-936.12,-28,No blank-marketplace rows exist in this dataset,Tested; 0 blank rows found - identical to variant B
+F,All Amazon source aliases (AMAZON + REPLACEMENT) + Vendor,41146.84,2392,-936.12,-20,REPLACEMENT rows carry GBP0.00 Sales; only affects Orders,Reproduced; REPLACEMENT source has zero Sales impact
+G,Gross Sales before negative adjustments + Vendor,41146.84,1856,-936.12,-556,No negative order_total rows exist in this dataset,Tested; positive-only Sales identical to net Sales
+H,No SKU restriction (ASIN+SKU grain vs unrestricted),41146.84,1856,-936.12,-556,SKU was never used as a filter in the current calculation,Tested; identical total confirms no SKU-based exclusion exists
+I,ASIN-only aggregation (526 distinct ASINs) instead of ASIN+SKU (539 pairs),41146.84,1856,-936.12,-556,Aggregation grain change does not alter the summed total,Tested; grain change confirmed to not affect Sales total
+J,Sum of each Utharsika-only account (amazon Dcvoltage + amazon Ledsone + amazon SRM Amazon),36843.88 (FBM+FBA only; +4302.96 Vendor = 41146.84),1856,-936.12,-556,All 3 known accounts already included; no account exclusion exists to remove,Reproduced; confirms no account-scope reduction is occurring

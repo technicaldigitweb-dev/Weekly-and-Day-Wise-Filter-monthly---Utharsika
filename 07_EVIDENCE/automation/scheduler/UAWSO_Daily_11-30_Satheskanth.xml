@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Date>2026-07-15T00:00:00</Date>
+    <Author>LED237</Author>
+    <Description>UAWSO (Utharsika Amazon UK Daily, Weekly and Month-to-Date Sales and Orders Report) daily automated run. Runs 05_IMPLEMENTATION\automation\run_uawso_daily.ps1 -Publish, which invokes uawso_daily_runner.py to extract fresh source data (2025-01-01 through the safe/complete end date), generate a new dated/versioned HTML report, run the pre-publication validation checklist, and publish exactly one new ph_task row - all under the mandatory Historical Output Protection policy (never overwrites/modifies any existing HTML file or ph_task row). NOT YET REGISTERED on this machine - registering an unattended ("run whether logged on or not") task requires local Administrator elevation, which the build session that produced this file did not have. See 07_EVIDENCE\automation\scheduler\scheduler_registration_notes.md for the exact blocking error and the one-line elevated command to complete registration.</Description>
+    <URI>\UAWSO Daily 11-30 - Satheskanth</URI>
+  </RegistrationInfo>
+  <Triggers>
+    <CalendarTrigger>
+      <StartBoundary>2026-07-16T11:30:00</StartBoundary>
+      <Enabled>true</Enabled>
+      <ScheduleByDay>
+        <DaysInterval>1</DaysInterval>
+      </ScheduleByDay>
+    </CalendarTrigger>
+  </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <UserId>S-1-5-18</UserId>
+      <RunLevel>HighestAvailable</RunLevel>
+    </Principal>
+  </Principals>
+  <Settings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <RunOnlyIfNetworkAvailable>true</RunOnlyIfNetworkAvailable>
+    <IdleSettings>
+      <StopOnIdleEnd>false</StopOnIdleEnd>
+      <RestartOnIdle>false</RestartOnIdle>
+    </IdleSettings>
+    <AllowStartOnDemand>true</AllowStartOnDemand>
+    <Enabled>false</Enabled>
+    <Hidden>false</Hidden>
+    <RunOnlyIfIdle>false</RunOnlyIfIdle>
+    <WakeToRun>false</WakeToRun>
+    <ExecutionTimeLimit>PT2H</ExecutionTimeLimit>
+    <Priority>7</Priority>
+    <RestartOnFailure>
+      <Interval>PT5M</Interval>
+      <Count>3</Count>
+    </RestartOnFailure>
+  </Settings>
+  <Actions Context="Author">
+    <Exec>
+      <Command>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Command>
+      <Arguments>-NoProfile -ExecutionPolicy Bypass -File "C:\Users\LED237\Documents\Projects\Weekly and Day Wise Filter monthly\05_IMPLEMENTATION\automation\run_uawso_daily.ps1" -Publish</Arguments>
+      <WorkingDirectory>C:\Users\LED237\Documents\Projects\Weekly and Day Wise Filter monthly\05_IMPLEMENTATION\automation</WorkingDirectory>
+    </Exec>
+  </Actions>
+</Task>

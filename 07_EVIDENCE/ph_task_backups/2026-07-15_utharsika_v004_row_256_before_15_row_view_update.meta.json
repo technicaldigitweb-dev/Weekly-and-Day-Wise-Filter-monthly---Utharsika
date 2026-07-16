@@ -1,0 +1,12 @@
+{
+  "row_id": 256,
+  "task_id": "UAWSO-2026-07-15-utharsika-v004",
+  "version_level": 4,
+  "version_status": "released",
+  "stored_html_sha256_in_db": "8751b4d373772d4bc38c5e424000f846b842b61b73a9bb40368ba71df57d6f1e",
+  "stored_char_len_in_db": 5123359,
+  "backup_file_sha256": "8751b4d373772d4bc38c5e424000f846b842b61b73a9bb40368ba71df57d6f1e",
+  "backup_file_byte_size": 5123369,
+  "updated_at_before_backup": "2026-07-15 16:30:05.895200+05:30",
+  "backup_path": "C:\\Users\\LED237\\Documents\\Projects\\Weekly and Day Wise Filter monthly\\05_IMPLEMENTATION\\src\\..\\..\\07_EVIDENCE\\ph_task_backups\\2026-07-15_utharsika_v004_row_256_before_15_row_view_update.html"
+}

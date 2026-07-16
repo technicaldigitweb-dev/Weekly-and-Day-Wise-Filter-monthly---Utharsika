@@ -1,0 +1,9 @@
+metric,value,result
+assigned_asin_count_source (public.user->ph_categories->ph_cate_products DISTINCT ref_id, which_channel=1, user_name='utharsika'),1723,baseline
+assignment_row_count_source,1723,PASS (equals distinct count - 0 duplicate assignment rows)
+duplicate_assignment_rows,0,PASS
+html_asin_count (embedded product_master_asin_level),1723,PASS
+html_asin_distinct_count,1723,PASS
+duplicate_html_asins,0,PASS
+missing_assigned_asins (in source scope, absent from HTML),0,PASS
+extra_html_asins (in HTML, absent from source scope),0,PASS

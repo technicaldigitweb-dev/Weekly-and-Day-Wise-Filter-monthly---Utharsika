@@ -1,0 +1,17 @@
+"use strict";
+var fs = require("fs"), path = require("path"), vm = require("vm");
+var html = fs.readFileSync(path.join(__dirname, "..", "..", "09_OUTPUTS", "2026-07-14_utharsika_new_v002.html"), "utf-8");
+var scripts = [];
+var re = /<script>([\s\S]*?)<\/script>/g;
+var m;
+while ((m = re.exec(html)) !== null) scripts.push(m[1]);
+var sandbox = { module: { exports: {} }, self: {} };
+vm.createContext(sandbox);
+vm.runInContext(scripts[0], sandbox);
+var Engine = sandbox.module.exports;
+var bounds = { selectableStart: "2026-01-01", selectableEnd: "2026-07-13", historyStart: "2025-01-01", historyEnd: "2026-07-13", latestCompleted: "2026-07-13" };
+console.log("DAILY:", JSON.stringify(Engine.resolvePeriod("DAILY", {date:"2026-06-15"}, bounds)));
+console.log("WEEKLY:", JSON.stringify(Engine.resolvePeriod("WEEKLY", {weekStart:"2026-06-15"}, bounds)));
+console.log("MONTH:", JSON.stringify(Engine.resolvePeriod("MONTH", {month:"2026-06"}, bounds)));
+console.log("MTD:", JSON.stringify(Engine.resolvePeriod("MTD", {}, bounds)));
+console.log("CUSTOM:", JSON.stringify(Engine.resolvePeriod("CUSTOM", {customStart:"2026-07-01", customEnd:"2026-07-13"}, bounds)));

@@ -1,0 +1,12 @@
+check,value,result
+one_canonical_row_per_asin,1723 rows / 1723 distinct ASINs,PASS
+no_canonical_sku_grouping (data model),product_master_asin_level has no sku field; daily_aggregates_asin grouped by (date,asin) only,PASS
+no_visible_sku_column,data-field=\"sku\" count = 0,PASS
+no_row_type_column,\"Row Type\" mentions (case-insensitive) = 0,PASS
+one_selected_image_per_asin,data-field=\"image\" count = 1; 0 image mismatches across 1723 ASINs vs live source,PASS
+csv_export_one_row_per_asin,downloadCsv iterates state.lastFilteredRows (ASIN-level rows, no per-SKU expansion),PASS
+image_url_exported,CSV headers include \"Image URL\",PASS
+sku_not_exported,CSV headers contain no \"SKU\" entry,PASS
+row_type_not_exported,CSV headers contain no \"Row Type\" entry,PASS
+complete_filtered_export_uses_all_filtered_rows_not_just_current_page,downloadCsv(state.lastFilteredRows) - lastFilteredRows assigned the full sorted array, not the paginated page slice (renderTable: state.lastFilteredRows = sorted),PASS
+exactly_one_download_action,id=\"btn-csv\" count = 1,PASS

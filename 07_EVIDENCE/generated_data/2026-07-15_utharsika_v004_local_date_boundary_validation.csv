@@ -1,0 +1,10 @@
+check,value,result
+required_range,2025-01-01 through 2026-07-14 (exclusive upper boundary 2026-07-15),baseline
+embedded_min_calendar_date,2025-01-01,PASS
+embedded_max_calendar_date,2026-07-14,PASS
+rows_before_2025-01-01,0,PASS
+rows_on_or_after_2026-07-15,0,PASS
+distinct_calendar_dates_covered,560,informational
+distinct_months_covered,19 (2025-01 through 2026-07),PASS (matches prior 19-month reconciliation baseline)
+duplicate_date_asin_rows_in_daily_aggregates,0,PASS
+vendor_reporting_window_internal_overlap (nested/overlapping periods for the SAME ASIN both fully summed - no proration),2 ASINs affected (B0DPMQZ1WP +11.66 revenue/+1 unit; B0DPMRVHHR +12.41 revenue/+1 unit),NON-BLOCKING OBSERVATION - see Section 10 of main evidence file; combined impact 24.07 GBP / 2 units against Vendor Sales total of 46814.94 GBP (0.05%) and report Total Sales of 718835.91 GBP (0.003%) - pre-existing 'sum-if-overlap no-proration' rule unchanged since v3/v4, not introduced by v004

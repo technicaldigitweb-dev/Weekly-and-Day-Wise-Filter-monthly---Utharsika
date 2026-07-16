@@ -1,0 +1,9 @@
+check,value,result
+source_rows_included (AMAZON+REPLACEMENT, scope, date range, dynamic status rule),34454,baseline
+source_distinct_order_item_info (flat COUNT DISTINCT over whole included set),34454,PASS (equals source_rows_included - no duplicate order_item_info rows)
+source_orders_grouped_by_date_asin (SUM of COUNT(DISTINCT order_item_info) per (date,ASIN) group),34454,PASS (equals flat distinct count exactly - grouping introduces no double count)
+html_total_orders (embedded daily_aggregates_asin, fbm_orders+fba_orders summed),34454,PASS
+duplicate_order_items_caused_by_joins,0,PASS
+missing_source_order_items (present in source, absent from HTML per-ASIN sums),0,PASS (0/1723 ASINs mismatched - see asin_orders_reconciliation.csv)
+extra_html_order_items (present in HTML, not attributable to source),0,PASS
+vendor_units_included_as_orders,0,PASS (Vendor Orders is null/N/A in computeRowsV5 and computeTotalV5 - never added to totalOrders)

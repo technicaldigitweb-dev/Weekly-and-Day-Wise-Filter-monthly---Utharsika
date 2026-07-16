@@ -1,0 +1,59 @@
+# Secrets and environment
+.env
+.env.*
+!.env.example
+!*.example.env
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets.json
+
+# Project credential locations
+05_IMPLEMENTATION/config/.env
+05_IMPLEMENTATION/config/*.local
+**/temp_user*
+**/*credentials*
+**/*secret*
+
+# Real one-off DB-access template scripts contain hardcoded live credentials
+# as default fallback values (host/port/db/user/password) - confirmed during
+# the 2026-07-16 pre-push secret audit. update_table.py is not caught by the
+# **/temp_user* pattern above, so the whole source folder is excluded.
+02_SOURCE/db_access_templates/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Runtime transient data
+05_IMPLEMENTATION/runtime/uawso_daily/locks/
+05_IMPLEMENTATION/runtime/uawso_daily/logs/
+05_IMPLEMENTATION/runtime/uawso_daily/staging/
+05_IMPLEMENTATION/runtime/uawso_daily/state/
+
+# Legacy generated/working-data dumps (not curated evidence - see 07_EVIDENCE)
+05_IMPLEMENTATION/state/
+
+# Intermediate/backup staging HTML (not approved final outputs - see 09_OUTPUTS root)
+09_OUTPUTS/staging/
+
+# Temporary and OS files
+*.tmp
+*.temp
+*.bak
+*.swp
+Thumbs.db
+.DS_Store
+
+# Browser/test artifacts
+playwright-report/
+test-results/
+blob-report/

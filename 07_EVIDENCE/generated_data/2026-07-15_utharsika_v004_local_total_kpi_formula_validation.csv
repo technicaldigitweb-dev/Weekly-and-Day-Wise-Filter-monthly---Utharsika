@@ -1,0 +1,4 @@
+formula,verification_method,per_asin_failures,aggregate_source_total,aggregate_html_total,difference,result
+Total Sales = FBM Sales + FBA Sales + Vendor Sales,"Structural: computeRowsV5 (uawso_client_engine.js line 679) sets cySales = cs.fbmSales + cs.fbaSales + cv.vendorSales, then totalSales=cySales - identity by construction, not independently computed",0,718835.91,718835.91,0.00,PASS
+Total Orders = FBM Orders + FBA Orders,"Structural: computeRowsV5 (line 677) sets cyOrders = cs.fbmOrders + cs.fbaOrders, then totalOrders=cyOrders - Vendor Units never added (vendorOrders=null)",0,34454,34454,0,PASS
+Total Quantity = FBM Quantity + FBA Quantity + Vendor Units,"Structural: computeRowsV5 (line 681) sets cyQuantity = cs.fbmQuantity + cs.fbaQuantity + cv.vendorUnits, then totalQuantity=cyQuantity",0,47166,47166,0,PASS

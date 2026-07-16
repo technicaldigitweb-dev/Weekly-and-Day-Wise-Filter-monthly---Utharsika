@@ -1,0 +1,18 @@
+# UAWSO daily automation - example systemd timer unit. NOT INSTALLED.
+# See uawso-daily.service.example for the paired service unit and the
+# deployment steps (none of which are performed by this task).
+#
+# OnCalendar uses systemd's own timezone-aware calendar spec - "Asia/Colombo"
+# is set explicitly here so the 12:00 firing time is correct regardless of
+# the host machine's configured local timezone.
+
+[Unit]
+Description=Run UAWSO daily automation at 12:00 Asia/Colombo, daily
+
+[Timer]
+OnCalendar=*-*-* 12:00:00 Asia/Colombo
+Persistent=true
+Unit=uawso-daily.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,4 @@
+ph_task_id,updated_at_before_this_task,updated_at_after_this_task,html_content_md5_before,html_content_md5_after,status
+157,2026-07-15 05:27:22+05:30,2026-07-15 05:27:22+05:30,5dd86e3aec539c8373ecaddd538664ed,5dd86e3aec539c8373ecaddd538664ed,UNCHANGED (still in its pre-existing, previously-documented incident state - not modified by this task)
+237,2026-07-15 05:27:38+05:30,2026-07-15 05:27:38+05:30,af2cef689e385ed25543d721a3dc37f6,af2cef689e385ed25543d721a3dc37f6,UNCHANGED (content byte-identical to local 2026-07-14_utharsika_v002.html)
+new_row_inserted,N/A,N/A,N/A,N/A,NO - no ph_task row was inserted or updated by this task, per Section 18 (publication requires separate approval)

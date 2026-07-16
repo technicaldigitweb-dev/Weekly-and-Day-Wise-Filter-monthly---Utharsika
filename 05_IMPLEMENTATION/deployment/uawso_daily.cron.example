@@ -1,0 +1,30 @@
+# UAWSO daily automation - example crontab entry. NOT INSTALLED.
+#
+# This file is documentation only - copying it into an active crontab
+# (`crontab -e` or a file under /etc/cron.d/) is a separate, explicit
+# deployment step that this task does not perform.
+#
+# Schedule: 12:00 PM Asia/Colombo (UTC+05:30, no daylight saving), daily.
+#
+# Preferred form (cronie/Vixie cron with CRON_TZ support - most modern
+# Linux distributions): set CRON_TZ so the schedule is correct even if the
+# system's default timezone is not Asia/Colombo.
+CRON_TZ=Asia/Colombo
+0 12 * * * /path/to/project/05_IMPLEMENTATION/commands/update_for_today.sh >> /path/to/project/05_IMPLEMENTATION/runtime/uawso_daily/logs/cron.log 2>&1
+
+# Fallback form, for cron daemons that do NOT support CRON_TZ (per-line or
+# per-file): compute the fixed UTC offset yourself. Asia/Colombo is
+# UTC+05:30 year-round, so 12:00 Colombo = 06:30 UTC. If the crontab's
+# environment/system timezone is UTC, use:
+# 30 6 * * * /path/to/project/05_IMPLEMENTATION/commands/update_for_today.sh >> /path/to/project/05_IMPLEMENTATION/runtime/uawso_daily/logs/cron.log 2>&1
+
+# Notes:
+# - Replace /path/to/project with the actual absolute deployment path.
+# - The wrapper script itself sets its working directory - cron's default
+#   minimal PATH/HOME is otherwise sufficient since python3 is invoked
+#   directly (adjust the shebang/python3 path in update_for_today.sh if a
+#   virtualenv or specific interpreter is required on the target host).
+# - Database credentials must already exist in
+#   05_IMPLEMENTATION/config/.env on the target host (git-ignored, NTFS/
+#   POSIX-permission restricted) - this cron entry does not set or pass
+#   any credential.

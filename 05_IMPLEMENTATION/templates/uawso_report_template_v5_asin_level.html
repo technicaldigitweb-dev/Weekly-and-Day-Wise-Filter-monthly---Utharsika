@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>__UAWSO_HEAD_TITLE__</title>
+<style>
+  :root {
+    --ink:#1b2430; --muted:#5b6b7c; --border:#d9e0e6; --bg:#f7f9fb; --card:#ffffff;
+    --up:#1a7f4b; --down:#b23b3b; --flat:#7a6a1f; --accent:#22405b; --accent-bg:#eef2f5;
+    /* Table viewport sizing - measured (headless Chromium) from this exact
+       template's actual rendered dimensions, not guessed: thead row height
+       28px (font-size 0.8rem + padding 5px 7px + border), body row height
+       59px (driven by the 48px .uawso-product-image + 5px/5px td padding +
+       1px collapsed border - the tallest cell in a row; rows for the few
+       ASINs with no image render shorter, so this is a safe upper bound
+       that guarantees at least --uawso-visible-row-count full rows show),
+       pagination bar height 53px (padding 8px 10px + font-size 0.8rem
+       content + 1px border-top). Height is an absolute px sum, not a
+       vh-relative guess, so exactly 15 rows are visible regardless of the
+       viewer's window size. */
+    --uawso-header-height: 28px;
+    --uawso-row-height: 59px;
+    --uawso-pagination-height: 53px;
+    --uawso-visible-row-count: 15;
+    /* Compensates for .uawso-table-wrap's own 1px top+1px bottom border,
+       which box-sizing:border-box subtracts from max-height before it
+       reaches clientHeight (measured via headless Chromium, not guessed):
+       without this, row 15 fell ~3-4px short of fully clearing the
+       pagination bar's covered area. */
+    --uawso-viewport-buffer: 6px;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; color: var(--ink); background: var(--bg); margin: 0; padding: 20px; }
+  .uawso-header { border-bottom: 3px solid var(--ink); padding-bottom: 12px; margin-bottom: 16px; }
+  .uawso-header h1 { margin: 0 0 6px 0; font-size: 1.35rem; }
+  .uawso-meta { font-size: 0.8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 12px 20px; }
+  .uawso-meta span strong { color: var(--ink); }
+  .uawso-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 16px; }
+  .uawso-kpi { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .uawso-kpi .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .uawso-kpi .value { font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
+  .uawso-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 16px; }
+  .uawso-panel h2 { margin: 0 0 10px 0; font-size: 0.95rem; }
+  .uawso-filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 10px; align-items: end; }
+  .uawso-field { display: flex; flex-direction: column; gap: 4px; position: relative; }
+  .uawso-field label { font-size: 0.72rem; color: var(--muted); }
+  .uawso-field select, .uawso-field input { padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem; }
+  .uawso-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .uawso-btn { padding: 7px 16px; border-radius: 4px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; font-size: 0.85rem; }
+  .uawso-btn.secondary { background: #fff; color: var(--accent); }
+  .uawso-hidden { display: none !important; }
+  .uawso-summary { font-size: 0.82rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .uawso-summary strong { color: var(--ink); }
+  .uawso-note { background: #fff7e0; border: 1px solid #e3c67a; color: #6b5410; padding: 8px 10px; border-radius: 4px; font-size: 0.8rem; margin-top: 8px; }
+  .uawso-error { background: #fdecec; border: 1px solid #e3a3a3; color: #7a1f1f; padding: 8px 10px; border-radius: 4px; font-size: 0.8rem; margin-top: 8px; }
+  table.uawso-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; background: var(--card); }
+  table.uawso-table th, table.uawso-table td { border: 1px solid var(--border); padding: 5px 7px; text-align: right; white-space: nowrap; }
+  table.uawso-table th { background: var(--accent-bg); text-align: center; cursor: pointer; user-select: none; }
+  table.uawso-table th.sorted-asc::after { content: " \25B2"; }
+  table.uawso-table th.sorted-desc::after { content: " \25BC"; }
+  table.uawso-table td:first-child, table.uawso-table td:nth-child(2) { text-align: left; }
+  tr.uawso-total-row { font-weight: 700; background: var(--accent-bg); }
+  tr.uawso-vendor-row { background: #eef6fb; }
+  .trend-up { color: var(--up); font-weight: 700; }
+  .trend-down { color: var(--down); font-weight: 700; }
+  .trend-flat { color: var(--flat); font-weight: 700; }
+  .undef { color: var(--muted); font-style: italic; }
+  /* Bounded scroll container so a sticky header (top:0) and sticky first
+     two columns (left:0 / left:<col1 width>) both stick correctly, in
+     both scroll directions, within the same box - the standard robust
+     pattern for combined sticky-header + frozen-column tables. */
+  .uawso-table-wrap {
+    overflow: auto;
+    max-height: calc(var(--uawso-header-height) + (var(--uawso-row-height) * var(--uawso-visible-row-count)) + var(--uawso-pagination-height) + var(--uawso-viewport-buffer));
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+  }
+  table.uawso-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--accent-bg);
+  }
+  /* Frozen columns 1 (ASIN) and 2 (Image). Column 2's left offset is set
+     at render time from column 1's ACTUAL measured width (see
+     updateStickyColumnOffsets() below) via the --uawso-col1-width custom
+     property - never a guessed pixel value. The 90px fallback only
+     applies before the first render tick. */
+  table.uawso-table th:nth-child(1),
+  table.uawso-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--card);
+  }
+  table.uawso-table th:nth-child(2),
+  table.uawso-table td:nth-child(2) {
+    position: sticky;
+    left: var(--uawso-col1-width, 90px);
+    z-index: 2;
+    background: var(--card);
+  }
+  /* Frozen header cells sit above both the plain sticky header row AND
+     the frozen body columns - they are sticky in both axes at once. */
+  table.uawso-table thead th:nth-child(1),
+  table.uawso-table thead th:nth-child(2) {
+    z-index: 4;
+    background: var(--accent-bg);
+  }
+  table.uawso-table tr.uawso-total-row td:nth-child(1),
+  table.uawso-table tr.uawso-total-row td:nth-child(2) {
+    background: var(--accent-bg);
+  }
+  /* Sticky pagination bar. Positioned last inside the SAME bounded scroll
+     container (.uawso-table-wrap) as the sticky header/columns above, so
+     it can never overlap the separate Column Definitions panel that lives
+     outside that container. z-index 5 is the highest in this table's
+     stacking order (frozen body columns=2 < plain sticky header=3 <
+     frozen header-corner cells=4 < pagination bar=5), so it always
+     renders above scrolling rows AND the frozen columns at their
+     intersection, with no conflicts. Because it is the trailing element
+     in the scroll container, its "stuck" position and its natural
+     end-of-content position coincide exactly at max scroll - the last
+     table row is never covered once fully scrolled into view; the small
+     margin-top below is an extra safety cushion on top of that. */
+  .uawso-pagination {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.08);
+  }
+  .uawso-pagination-info { display: flex; flex-direction: column; gap: 2px; }
+  .uawso-pagination-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .uawso-pagination button { padding: 4px 10px; border: 1px solid var(--border); background: #fff; border-radius: 4px; cursor: pointer; }
+  .uawso-pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .uawso-pagination-goto-label { font-size: 0.75rem; }
+  .uawso-pagination input[type="number"] { width: 64px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.8rem; }
+  .uawso-empty { padding: 20px; text-align: center; color: var(--muted); }
+  .uawso-footer { margin-top: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; font-size: 0.78rem; color: var(--muted); }
+  .uawso-footer ul { margin: 6px 0 0 0; padding-left: 18px; }
+  .uawso-coverage-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
+  .uawso-coverage-table td, .uawso-coverage-table th { border: 1px solid var(--border); padding: 5px 8px; text-align: left; }
+  .uawso-msdd { position: relative; }
+  .uawso-msdd-toggle { display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff; }
+  .uawso-msdd-panel { display: none; position: absolute; z-index: 20; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--border); border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); max-height: 260px; overflow-y: auto; padding: 6px; }
+  .uawso-msdd.open .uawso-msdd-panel { display: block; }
+  .uawso-msdd-search { width: 100%; padding: 5px 6px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.82rem; }
+  .uawso-msdd-actions { display: flex; gap: 6px; margin-bottom: 6px; }
+  .uawso-msdd-actions button { font-size: 0.72rem; padding: 3px 8px; border: 1px solid var(--border); background: var(--accent-bg); border-radius: 3px; cursor: pointer; }
+  .uawso-msdd-option { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; padding: 2px 4px; }
+  .uawso-msdd-option label { cursor: pointer; }
+  .uawso-msdd-more { font-size: 0.72rem; color: var(--muted); padding: 4px; }
+  .uawso-product-image { width: 48px; height: 48px; object-fit: contain; display: block; background: #fff; border: 1px solid var(--border); border-radius: 3px; }
+  .uawso-image-cell { text-align: center !important; }
+  .uawso-image-fallback { font-size: 0.68rem; color: var(--muted); font-style: italic; white-space: normal; max-width: 70px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="uawso-header">
+  <h1>__UAWSO_HEAD_TITLE__</h1>
+  <div class="uawso-meta">
+    <span><strong>Project code:</strong> __UAWSO_PROJECT_CODE__</span>
+    <span><strong>Assigned user:</strong> __UAWSO_ASSIGNED_USER__</span>
+    <span><strong>Version:</strong> __UAWSO_VERSION__</span>
+    <span><strong>Generated (Asia/Colombo):</strong> __UAWSO_GENERATED_TS__</span>
+    <span><strong>Latest completed date:</strong> __UAWSO_LATEST_COMPLETED_DATE__</span>
+    <span><strong>Embedded history:</strong> __UAWSO_HISTORY_START__ &rarr; __UAWSO_HISTORY_END__</span>
+    <span><strong>Selectable current period:</strong> __UAWSO_SELECTABLE_START__ &rarr; __UAWSO_SELECTABLE_END__</span>
+    <span><strong>Assigned ASINs:</strong> __UAWSO_ASSIGNED_ASIN_COUNT__</span>
+    <span><strong>ASINs with image:</strong> __UAWSO_IMAGE_COVERED_COUNT__</span>
+    <span><strong>Template version:</strong> __UAWSO_TEMPLATE_VERSION__</span>
+  </div>
+</div>
+
+<div class="uawso-kpis" id="uawso-kpis"></div>
+
+<div class="uawso-panel">
+  <h2>Filters</h2>
+  <div class="uawso-filter-grid">
+    <div class="uawso-field">
+      <label for="f-mode">Comparison mode</label>
+      <select id="f-mode">
+        <option value="MTD" selected>Month-to-Date</option>
+        <option value="DAILY">Daily</option>
+        <option value="WEEKLY">Weekly</option>
+        <option value="MONTH">Month</option>
+        <option value="CUSTOM">Custom Date Range</option>
+      </select>
+    </div>
+    <div class="uawso-field" id="wrap-particular-date">
+      <label for="f-date">Particular date</label>
+      <input type="date" id="f-date">
+    </div>
+    <div class="uawso-field" id="wrap-month">
+      <label for="f-month">Month</label>
+      <input type="month" id="f-month">
+    </div>
+    <div class="uawso-field" id="wrap-week-start">
+      <label for="f-week-start">Week start (Monday)</label>
+      <input type="date" id="f-week-start">
+    </div>
+    <div class="uawso-field" id="wrap-week-end">
+      <label for="f-week-end">Week end</label>
+      <input type="date" id="f-week-end" disabled>
+    </div>
+    <div class="uawso-field" id="wrap-custom-start">
+      <label for="f-custom-start">Custom start date</label>
+      <input type="date" id="f-custom-start">
+    </div>
+    <div class="uawso-field" id="wrap-custom-end">
+      <label for="f-custom-end">Custom end date</label>
+      <input type="date" id="f-custom-end">
+    </div>
+
+    <div class="uawso-field">
+      <label>ASIN <span id="asin-selected-count">(all)</span></label>
+      <div class="uawso-msdd" id="asin-dropdown">
+        <div class="uawso-msdd-toggle" id="asin-dropdown-toggle">Select ASINs &#9662;</div>
+        <div class="uawso-msdd-panel">
+          <input type="text" class="uawso-msdd-search" id="asin-search" placeholder="Search ASIN...">
+          <div class="uawso-msdd-actions">
+            <button type="button" id="asin-select-all">Select All</button>
+            <button type="button" id="asin-clear-all">Clear All</button>
+          </div>
+          <div id="asin-options"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="uawso-field">
+      <label for="f-search">Global search (ASIN / product name)</label>
+      <input type="text" id="f-search" placeholder="type to search">
+    </div>
+    <div class="uawso-field">
+      <label for="f-trend">Trend</label>
+      <select id="f-trend">
+        <option value="">Any</option>
+        <option value="UP">UP</option>
+        <option value="DOWN">DOWN</option>
+        <option value="NO CHANGE">NO CHANGE</option>
+      </select>
+    </div>
+    <div class="uawso-field">
+      <label for="f-sort-field">Sort field</label>
+      <select id="f-sort-field">
+        <option value="asin">ASIN</option>
+        <option value="fbmSales">FBM Sales</option>
+        <option value="fbaSales">FBA Sales</option>
+        <option value="vendorSales">Vendor Sales</option>
+        <option value="totalSales" selected>Total Sales</option>
+        <option value="totalOrders">Total Orders</option>
+        <option value="previousYearSales">PY Sales</option>
+        <option value="salesChange">Sales Change</option>
+        <option value="orderChange">Order Change</option>
+        <option value="trend">Trend</option>
+        <option value="achievementPct">Achievement %</option>
+      </select>
+    </div>
+    <div class="uawso-field">
+      <label for="f-sort-dir">Sort direction</label>
+      <select id="f-sort-dir">
+        <option value="desc" selected>Descending</option>
+        <option value="asc">Ascending</option>
+      </select>
+    </div>
+    <div class="uawso-field">
+      <label for="f-rows-per-page">Rows per page</label>
+      <select id="f-rows-per-page">
+        <option value="25">25</option>
+        <option value="50" selected>50</option>
+        <option value="100">100</option>
+        <option value="250">250</option>
+      </select>
+    </div>
+  </div>
+  <div class="uawso-actions">
+    <button class="uawso-btn" id="btn-apply">Apply</button>
+    <button class="uawso-btn secondary" id="btn-reset">Reset</button>
+    <button class="uawso-btn secondary" id="btn-csv">Download Filtered Full Data</button>
+  </div>
+  <div id="uawso-messages"></div>
+</div>
+
+<div class="uawso-panel">
+  <h2>Active comparison</h2>
+  <div class="uawso-summary" id="uawso-summary"></div>
+</div>
+
+<div class="uawso-table-wrap">
+  <table class="uawso-table" id="uawso-table">
+    <thead>
+      <tr>
+        <th data-field="asin">ASIN</th>
+        <th data-field="image">Image</th>
+        <th data-field="fbmSales">FBM Sales</th>
+        <th data-field="fbmOrders">FBM Orders</th>
+        <th data-field="fbaSales">FBA Sales</th>
+        <th data-field="fbaOrders">FBA Orders</th>
+        <th data-field="vendorSales">Vendor Sales</th>
+        <th data-field="vendorOrders">Vendor Orders</th>
+        <th data-field="totalSales">Total Sales</th>
+        <th data-field="totalOrders">Total Orders</th>
+        <th data-field="previousYearSales">PY Sales</th>
+        <th data-field="currentYearSales">CY Sales</th>
+        <th data-field="previousYearOrders">PY Orders</th>
+        <th data-field="currentYearOrders">CY Orders</th>
+        <th data-field="salesChange">Sales Change %</th>
+        <th data-field="orderChange">Order Change %</th>
+        <th data-field="trend">Trend</th>
+        <th data-field="achievementPct">Achievement %</th>
+      </tr>
+    </thead>
+    <tbody id="uawso-tbody"></tbody>
+    <tfoot id="uawso-tfoot"></tfoot>
+  </table>
+  <div class="uawso-pagination" id="uawso-pagination"></div>
+</div>
+
+<div class="uawso-panel">
+  <h2>Data Coverage Notes</h2>
+  <table class="uawso-coverage-table">
+    <tr><td>Total assigned ASINs</td><td>__UAWSO_ASSIGNED_ASIN_COUNT__</td></tr>
+    <tr><td>Total table rows (one row per ASIN - true ASIN-level grain)</td><td>__UAWSO_ASSIGNED_ASIN_COUNT__</td></tr>
+    <tr><td>ASINs with a usable product image</td><td>__UAWSO_IMAGE_COVERED_COUNT__</td></tr>
+    <tr><td>ASINs with no image available (no valid listing row, or all image URLs blank)</td><td>__UAWSO_NO_IMAGE_COUNT__</td></tr>
+    <tr><td>ASINs with more than one valid image (lowest listing_data.id selected deterministically)</td><td>__UAWSO_MULTI_IMAGE_COUNT__</td></tr>
+    <tr><td>ASINs without sales history in the selected period</td><td id="cov-no-sales">(recalculated per filter selection)</td></tr>
+    <tr><td>ASINs excluded from the table</td><td>0 - every assigned ASIN is always represented by exactly one row.</td></tr>
+  </table>
+  <div class="uawso-note">
+    Row grain: <strong>one row = one ASIN</strong> (REQ-02-D01 - SKU is no longer part of the report grain, the SQL grouping, or any output field). All SKU activity that used to appear as separate ASIN+SKU rows is now aggregated directly into its ASIN's single row. Vendor sales (<code>public.vendor_sales</code>, ASIN-only) attach directly to that same single row - duplication across former SKU rows is structurally impossible now that only one row per ASIN exists.
+  </div>
+  <div class="uawso-note">
+    <strong>Image rule (REQ-02-D01):</strong> source is <code>public.listing_data.main_image_url</code>, joined on <code>ref_id = ASIN</code>, filtered to <code>which_channel=1</code>, <code>market_place='UK'</code>, <code>wrong_sku=0</code>. When more than one valid image row exists for an ASIN, the row with the lowest <code>listing_data.id</code> is selected - a deterministic, run-to-run-stable technical rule, not a claim that the chosen image is "better." Business-confirmed: any valid image under the ASIN is acceptable, since all SKUs under one ASIN represent the same product. "No image available" is shown when no valid image exists; "Image loading issue" is shown when a URL exists but the browser cannot load it - these are two distinct states, never conflated.
+  </div>
+  <div class="uawso-note">
+    <strong>Ordered Product Sales rule:</strong> Sales = the original product value ordered in the selected period, for the dynamic status-inclusion rule (every non-null, non-blank status except Cancelled/Canceled), <code>source_name='AMAZON'</code>, aggregated directly at ASIN level. A refund in the same or a later month does <strong>not</strong> remove the original Sales from the month the order was placed.
+  </div>
+  <div class="uawso-note">
+    <strong>Total Orders rule (ASIN-wise, REQ-02-D01, amended 2026-07-15 Section 3.2 and 2026-07-16 AMAZON-only Orders update):</strong> FBM Orders and FBA Orders = <code>COUNT(DISTINCT order_item_info)</code>, grouped <strong>directly by (date, ASIN)</strong> at the SQL extraction layer - never grouped by SKU first and summed - and restricted to <code>source_name='AMAZON'</code> only (REPLACEMENT-source rows do not contribute to any Order count, per the 2026-07-16 business-rule update). <strong>Vendor Orders = <code>public.vendor_sales.ordered_units</code> directly (one Vendor Unit = one Vendor Order)</strong> - a direct 1:1 mapping, not a <code>COUNT(DISTINCT order_item_info)</code> calculation, since Vendor has no order-item key. Total Orders = FBM Orders + FBA Orders + Vendor Orders. Vendor periods (start/end date ranges, half-open [start_date, end_date)) are attributed to any selected date range they overlap, without proration - a source-data granularity limitation, not a calculation error.
+  </div>
+  <div class="uawso-note">
+    <strong>Quantity removed from scope (2026-07-15, REQ-02-D01 Section 3.2):</strong> this report shows Sales and Orders only. No Quantity field (FBM/FBA/Vendor/Total/PY/CY Quantity, Quantity Change %) is calculated, displayed, or exported.
+  </div>
+</div>
+
+<div class="uawso-footer">
+  <strong>Methodology</strong>
+  <ul>
+    <li>Row grain: one row per ASIN (REQ-02-D01). Utharsika-assigned Amazon products only (resolved via public.user &rarr; public.ph_categories &rarr; public.ph_cate_products, DISTINCT applied, zero duplicate assignment rows verified). The table always starts from the complete assigned-ASIN master (__UAWSO_ASSIGNED_ASIN_COUNT__ ASINs) and left-joins transaction/vendor/image data - it never starts from transaction data.</li>
+    <li>Ordered Product Sales: Amazon UK only (source_name='AMAZON', market_place='UK'), dynamic status-inclusion rule, aggregated directly at ASIN grain and split by the <code>fba_sales</code> flag.</li>
+    <li>FBM/FBA Orders: <code>COUNT(DISTINCT order_item_info)</code>, grouped directly by (date, ASIN), dynamic status-inclusion rule, <code>source_name='AMAZON'</code> only (2026-07-16 business-rule update - REPLACEMENT-source rows no longer contribute to Orders).</li>
+    <li>Vendor Orders (2026-07-15 amendment, REQ-02-D01 Section 3.2): <code>public.vendor_sales.ordered_units</code> directly - one Vendor Unit = one Vendor Order. Total Orders = FBM Orders + FBA Orders + Vendor Orders.</li>
+    <li>Vendor: <code>public.vendor_sales</code>, <code>ordered_revenue</code>/<code>ordered_units</code>, attributed once per ASIN (structurally, since there is exactly one row per ASIN).</li>
+    <li>Quantity is not part of this report (removed 2026-07-15, REQ-02-D01 Section 3.2) - Sales and Orders only.</li>
+    <li>Image: <code>public.listing_data.main_image_url</code>, deterministic lowest-<code>id</code> tie-break, business-confirmed (see Data Coverage Notes above).</li>
+    <li>Data included through __UAWSO_LATEST_COMPLETED_DATE__; current-day partial data excluded.</li>
+    <li>Trend is Sales-based only (on CY vs PY Sales): UP / DOWN / NO CHANGE. Previous=0,Current&gt;0 &rarr; UP. Previous=0,Current=0 &rarr; NO CHANGE.</li>
+    <li>Achievement % measures progress against 130% of the equivalent prior-year period. Undefined ("&mdash;") when the prior-year base is zero and current &gt; 0 &mdash; never fabricated.</li>
+    <li>Historical data start: __UAWSO_HISTORY_START__. Report version: __UAWSO_VERSION__.</li>
+  </ul>
+</div>
+
+<div class="uawso-panel" id="uawso-column-definitions">
+  <h2>Column Definitions</h2>
+  <table class="uawso-coverage-table">
+    <tr><td><strong>ASIN</strong></td><td>The Amazon Standard Identification Number used to group the product. One row per ASIN - all SKUs that used to belong to this ASIN are combined into this single row.</td></tr>
+    <tr><td><strong>Image</strong></td><td>Shows one valid product image selected for the ASIN. If none exists, the report shows "No image available". If a valid image URL fails to load, it shows "Image loading issue".</td></tr>
+    <tr><td><strong>FBM Sales</strong></td><td>Ordered product Sales for orders fulfilled by the merchant (not Amazon), for this ASIN, in the selected period.</td></tr>
+    <tr><td><strong>FBM Orders</strong></td><td>Distinct qualifying order items fulfilled by the merchant, counted once at ASIN level.</td></tr>
+    <tr><td><strong>FBA Sales</strong></td><td>Ordered product Sales for orders fulfilled by Amazon, for this ASIN, in the selected period.</td></tr>
+    <tr><td><strong>FBA Orders</strong></td><td>Distinct qualifying order items fulfilled by Amazon, counted once at ASIN level.</td></tr>
+    <tr><td><strong>Vendor Sales</strong></td><td>Amazon Vendor revenue for this ASIN (<code>public.vendor_sales.ordered_revenue</code>), attributed once per ASIN.</td></tr>
+    <tr><td><strong>Vendor Orders</strong></td><td>The number of Vendor units ordered (<code>public.vendor_sales.ordered_units</code>). Under the approved business rule (2026-07-15), one Vendor unit equals one Vendor order.</td></tr>
+    <tr><td><strong>Total Sales</strong></td><td>Total qualifying product sales for all fulfilment channels under the ASIN within the selected date range, plus Vendor Sales where applicable according to the approved rule (FBM Sales + FBA Sales + Vendor Sales).</td></tr>
+    <tr><td><strong>Total Orders</strong></td><td>FBM Orders + FBA Orders + Vendor Orders.</td></tr>
+    <tr><td><strong>PY Sales</strong></td><td>Total Sales for the previous-year equivalent of the selected period.</td></tr>
+    <tr><td><strong>CY Sales</strong></td><td>Total Sales for the currently selected period.</td></tr>
+    <tr><td><strong>PY Orders</strong></td><td>Total Orders for the previous-year equivalent of the selected period.</td></tr>
+    <tr><td><strong>CY Orders</strong></td><td>Total Orders for the currently selected period.</td></tr>
+    <tr><td><strong>Sales Change %</strong></td><td>(Current-Year Sales - Previous-Year Sales) &divide; Previous-Year Sales. Shown as "&mdash;" when the previous-year value is zero.</td></tr>
+    <tr><td><strong>Order Change %</strong></td><td>(Current-Year Orders - Previous-Year Orders) &divide; Previous-Year Orders. Shown as "&mdash;" when the previous-year value is zero.</td></tr>
+    <tr><td><strong>Trend</strong></td><td>UP, DOWN, or NO CHANGE, based on Current-Year Sales compared to Previous-Year Sales only.</td></tr>
+    <tr><td><strong>Achievement %</strong></td><td>Current-Year Sales as a percentage of 130% of Previous-Year Sales (the sales target). Shown as "&mdash;" when the previous-year base is zero and current is greater than zero - never fabricated.</td></tr>
+  </table>
+</div>
+
+<script type="application/json" id="uawso-product-master-asin-level">__UAWSO_PRODUCT_MASTER_ASIN_LEVEL_JSON__</script>
+<script type="application/json" id="uawso-daily-aggregates-asin">__UAWSO_DAILY_AGGREGATES_ASIN_JSON__</script>
+<script type="application/json" id="uawso-vendor-periods">__UAWSO_VENDOR_PERIODS_JSON__</script>
+
+<script>
+__UAWSO_ENGINE_JS__
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var Engine = window.UAWSOEngine;
+
+  var HISTORY_START = "__UAWSO_HISTORY_START__";
+  var HISTORY_END = "__UAWSO_HISTORY_END__";
+  var SELECTABLE_START = "__UAWSO_SELECTABLE_START__";
+  var SELECTABLE_END = "__UAWSO_SELECTABLE_END__";
+  var LATEST_COMPLETED = "__UAWSO_LATEST_COMPLETED_DATE__";
+
+  var PRODUCT_MASTER_ASIN_LEVEL = JSON.parse(document.getElementById("uawso-product-master-asin-level").textContent);
+  var DAILY_ASIN = JSON.parse(document.getElementById("uawso-daily-aggregates-asin").textContent);
+  var VENDOR_PERIODS = JSON.parse(document.getElementById("uawso-vendor-periods").textContent);
+
+  var ASIN_INDEX = Engine.buildDailyIndexSplit(DAILY_ASIN);
+  var CANONICAL_ROWS = Engine.buildCanonicalRowsV5(PRODUCT_MASTER_ASIN_LEVEL);
+
+  var ASIN_LIST = PRODUCT_MASTER_ASIN_LEVEL.map(function(p){ return p.asin; }).sort();
+
+  function parseDate(s) { return Engine.parseDate(s); }
+  function fmtDate(d) { return Engine.fmtDate(d); }
+  function addDays(d, n) { return Engine.addDays(d, n); }
+  function resolvePeriod(mode, params) {
+    return Engine.resolvePeriod(mode, params, {
+      selectableStart: SELECTABLE_START, selectableEnd: SELECTABLE_END,
+      historyStart: HISTORY_START, historyEnd: HISTORY_END,
+      latestCompleted: LATEST_COMPLETED,
+    });
+  }
+
+  // ---- Searchable multi-select dropdown component (ASIN only) -----------
+  var selectedAsins = {};
+
+  function makeDropdown(opts) {
+    var dd = document.getElementById(opts.ddId);
+    var toggle = document.getElementById(opts.toggleId);
+    var searchEl = document.getElementById(opts.searchId);
+    var optionsEl = document.getElementById(opts.optionsId);
+    var countEl = document.getElementById(opts.countId);
+    var selectedMap = opts.selectedMap;
+
+    function visibleList() {
+      var q = searchEl.value.trim().toUpperCase();
+      var source = opts.getList();
+      return q ? source.filter(function(v){ return v.toUpperCase().indexOf(q) !== -1; }) : source;
+    }
+
+    function renderOptions() {
+      var list = visibleList();
+      var capped = list.slice(0, 300);
+      optionsEl.innerHTML = capped.map(function(v){
+        var checked = selectedMap[v] ? "checked" : "";
+        var safe = v.replace(/"/g, "&quot;");
+        return '<div class="uawso-msdd-option"><input type="checkbox" data-val="' + safe + '" ' + checked + '><label>' + v + '</label></div>';
+      }).join("");
+      if (list.length > capped.length) {
+        optionsEl.innerHTML += '<div class="uawso-msdd-more">Showing first 300 of ' + list.length + ' - refine search to see more.</div>';
+      }
+      Array.prototype.forEach.call(optionsEl.querySelectorAll('input[type="checkbox"]'), function(cb){
+        cb.addEventListener("change", function(){
+          if (cb.checked) selectedMap[cb.getAttribute("data-val")] = true;
+          else delete selectedMap[cb.getAttribute("data-val")];
+          updateCount();
+          opts.onChange();
+        });
+      });
+    }
+
+    function updateCount() {
+      var n = Object.keys(selectedMap).length;
+      countEl.textContent = n ? "(" + n + " selected)" : "(all)";
+    }
+
+    toggle.addEventListener("click", function(){
+      dd.classList.toggle("open");
+      if (dd.classList.contains("open")) renderOptions();
+    });
+    document.addEventListener("click", function(e){
+      if (!dd.contains(e.target)) dd.classList.remove("open");
+    });
+    searchEl.addEventListener("input", renderOptions);
+    document.getElementById(opts.selectAllId).addEventListener("click", function(){
+      visibleList().forEach(function(v){ selectedMap[v] = true; });
+      renderOptions(); updateCount(); opts.onChange();
+    });
+    document.getElementById(opts.clearAllId).addEventListener("click", function(){
+      Object.keys(selectedMap).forEach(function(k){ delete selectedMap[k]; });
+      renderOptions(); updateCount(); opts.onChange();
+    });
+
+    return { renderOptions: renderOptions, updateCount: updateCount };
+  }
+
+  var asinDropdown = makeDropdown({
+    ddId: "asin-dropdown", toggleId: "asin-dropdown-toggle", searchId: "asin-search",
+    optionsId: "asin-options", countId: "asin-selected-count", selectAllId: "asin-select-all",
+    clearAllId: "asin-clear-all", selectedMap: selectedAsins,
+    getList: function(){ return ASIN_LIST; },
+    onChange: function(){ state.page = 1; render(); },
+  });
+
+  function updateModeVisibility() {
+    var mode = document.getElementById("f-mode").value;
+    var show = { DAILY: ["wrap-particular-date"], MONTH: ["wrap-month"], MTD: [], WEEKLY: ["wrap-week-start","wrap-week-end"], CUSTOM: ["wrap-custom-start","wrap-custom-end"] };
+    var all = ["wrap-particular-date","wrap-month","wrap-week-start","wrap-week-end","wrap-custom-start","wrap-custom-end"];
+    all.forEach(function(id){ document.getElementById(id).classList.add("uawso-hidden"); });
+    (show[mode]||[]).forEach(function(id){ document.getElementById(id).classList.remove("uawso-hidden"); });
+  }
+
+  function todayGuard(dateStr) { return dateStr > LATEST_COMPLETED; }
+
+  var state = { page: 1, lastFilteredRows: [], lastPeriod: null };
+
+  function showEmpty(msg) {
+    document.getElementById("uawso-tbody").innerHTML = "";
+    document.getElementById("uawso-tfoot").innerHTML = "";
+    document.getElementById("uawso-pagination").innerHTML = "";
+    document.getElementById("uawso-kpis").innerHTML = "";
+    document.getElementById("uawso-summary").innerHTML = "<span>" + msg + "</span>";
+    state.lastFilteredRows = [];
+  }
+  function showError(msg) {
+    document.getElementById("uawso-messages").innerHTML = '<div class="uawso-error">' + msg + '</div>';
+  }
+
+  function applyFilters(rows) {
+    var search = document.getElementById("f-search").value.trim().toUpperCase();
+    var trend = document.getElementById("f-trend").value;
+    var asinKeys = Object.keys(selectedAsins);
+    return rows.filter(function(r) {
+      if (asinKeys.length && !selectedAsins[r.asin]) return false;
+      if (search) {
+        var hay = (r.asin + " " + (r.productTitle || "")).toUpperCase();
+        if (hay.indexOf(search) === -1) return false;
+      }
+      if (trend && r.trend !== trend) return false;
+      return true;
+    });
+  }
+
+  function fmtMoney(v){ return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmtPct(v){ return v === null ? '<span class="undef">&mdash;</span>' : (v*100).toFixed(2)+"%"; }
+  function fmtAchieve(v){ return v === null ? '<span class="undef">&mdash;</span>' : v.toFixed(2)+"%"; }
+  function trendSpan(t){ var cls = t==="UP"?"trend-up":t==="DOWN"?"trend-down":"trend-flat"; return '<span class="'+cls+'">'+t+'</span>'; }
+
+  function imageCell(r) {
+    if (!r.imageUrl) {
+      return '<span class="uawso-image-fallback">No image available</span>';
+    }
+    var safeUrl = String(r.imageUrl).replace(/"/g, "&quot;");
+    var safeAsin = String(r.asin).replace(/"/g, "&quot;");
+    return '<img class="uawso-product-image" src="' + safeUrl + '" alt="' + safeAsin + '" loading="lazy" ' +
+      'onerror="this.onerror=null;this.outerHTML=\'<span class=&quot;uawso-image-fallback&quot;>Image loading issue</span>\';">';
+  }
+
+  function computeAllRowsForPeriod(period) {
+    var curSplit = Engine.sumRangeByAsinV5(ASIN_INDEX, period.cyStart, period.cyEnd);
+    var prevSplit = Engine.sumRangeByAsinV5(ASIN_INDEX, period.pyStart, period.pyEnd);
+    var curVendor = Engine.sumVendorRangeV4(VENDOR_PERIODS, period.cyStart, period.cyEnd);
+    var prevVendor = Engine.sumVendorRangeV4(VENDOR_PERIODS, period.pyStart, period.pyEnd);
+    return Engine.computeRowsV5(CANONICAL_ROWS, curSplit, prevSplit, curVendor, prevVendor);
+  }
+
+  function render() {
+    document.getElementById("uawso-messages").innerHTML = "";
+    var mode = document.getElementById("f-mode").value;
+    var params = {
+      date: document.getElementById("f-date").value,
+      month: document.getElementById("f-month").value,
+      weekStart: document.getElementById("f-week-start").value,
+      customStart: document.getElementById("f-custom-start").value,
+      customEnd: document.getElementById("f-custom-end").value,
+    };
+
+    if (mode === "DAILY" && !params.date) { showEmpty("Select a date."); return; }
+    if (mode === "MONTH" && !params.month) { showEmpty("Select a month."); return; }
+    if (mode === "WEEKLY" && !params.weekStart) { showEmpty("Select a week start (Monday)."); return; }
+    if (mode === "CUSTOM" && (!params.customStart || !params.customEnd)) { showEmpty("Select both a start and end date."); return; }
+    if (mode === "DAILY" && todayGuard(params.date)) { showError("Selected date is today or in the future - latest completed date is " + LATEST_COMPLETED + "."); return; }
+    if (mode === "CUSTOM" && todayGuard(params.customEnd)) { showError("Custom end date is today or in the future."); return; }
+    if (mode === "WEEKLY" && params.weekStart) {
+      var wd = parseDate(params.weekStart).getUTCDay();
+      if (wd !== 1) { showError("Week start must be a Monday."); return; }
+      document.getElementById("f-week-end").value = fmtDate(addDays(parseDate(params.weekStart), 6));
+    }
+
+    var period;
+    try { period = resolvePeriod(mode, params); }
+    catch (e) { showError(e.message); return; }
+
+    var allRows = computeAllRowsForPeriod(period);
+    var rows = applyFilters(allRows);
+
+    var total = Engine.computeTotalV5(rows);
+    state.lastFilteredRows = rows;
+    state.lastPeriod = period;
+
+    renderSummary(mode, period, rows.length);
+    renderKpis(total, rows.length);
+    renderTable(rows, total);
+    renderCoverageNotes(rows);
+  }
+
+  function renderSummary(mode, period, visibleCount) {
+    var activeFilters = 0;
+    if (Object.keys(selectedAsins).length) activeFilters++;
+    ["f-search","f-trend"].forEach(function(id){ if (document.getElementById(id).value) activeFilters++; });
+    var html = "";
+    html += "<span><strong>Mode:</strong> " + mode + "</span>";
+    html += "<span><strong>Current period:</strong> " + period.cyStart + " &rarr; " + period.cyEnd + "</span>";
+    html += "<span><strong>Previous-year period:</strong> " + period.pyStart + " &rarr; " + period.pyEnd + "</span>";
+    html += "<span><strong>Active ASIN filters:</strong> " + (Object.keys(selectedAsins).length || "All") + "</span>";
+    html += "<span><strong>Active filter count:</strong> " + activeFilters + "</span>";
+    html += "<span><strong>Visible rows:</strong> " + visibleCount + "</span>";
+    document.getElementById("uawso-summary").innerHTML = html;
+    if (period.leapNote) document.getElementById("uawso-messages").innerHTML = '<div class="uawso-note">' + period.leapNote + '</div>';
+  }
+
+  function renderKpis(total, rowCount) {
+    var kpis = [
+      ["Previous-Year Ordered Sales", fmtMoney(total.previousYearSales)],
+      ["Current-Year Ordered Sales", fmtMoney(total.currentYearSales)],
+      ["Sales Change %", fmtPct(total.salesChange)],
+      ["Previous-Year Total Orders", total.previousYearOrders.toLocaleString()],
+      ["Current-Year Total Orders", total.currentYearOrders.toLocaleString()],
+      ["Order Change %", fmtPct(total.orderChange)],
+      ["Achievement Sales %", fmtAchieve(total.achievementPct)],
+      ["Achievement Orders %", fmtAchieve(total.achievementOrdersPct)],
+      ["Visible rows", rowCount.toLocaleString()],
+    ];
+    document.getElementById("uawso-kpis").innerHTML = kpis.map(function(k){
+      return '<div class="uawso-kpi"><div class="label">'+k[0]+'</div><div class="value">'+k[1]+'</div></div>';
+    }).join("");
+  }
+
+  var sortField = "totalSales", sortDir = "desc";
+
+  function sortRows(rows) {
+    sortField = document.getElementById("f-sort-field").value;
+    sortDir = document.getElementById("f-sort-dir").value;
+    return rows.slice().sort(function(a,b){
+      var av = a[sortField], bv = b[sortField];
+      if (av === null) av = -Infinity; if (bv === null) bv = -Infinity;
+      if (av < bv) return sortDir === "asc" ? -1 : 1;
+      if (av > bv) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  function renderTable(rows, total) {
+    var sorted = sortRows(rows);
+
+    var perPage = parseInt(document.getElementById("f-rows-per-page").value, 10);
+    var totalPages = sorted.length === 0 ? 0 : Math.max(1, Math.ceil(sorted.length / perPage));
+    if (totalPages === 0) { state.page = 0; }
+    else if (state.page < 1) { state.page = 1; }
+    else if (state.page > totalPages) { state.page = totalPages; }
+    var startIdx = (state.page - 1) * perPage;
+    var pageRows = totalPages === 0 ? [] : sorted.slice(startIdx, startIdx + perPage);
+
+    if (sorted.length === 0) {
+      document.getElementById("uawso-tbody").innerHTML = '<tr><td colspan="18" class="uawso-empty">No matching Utharsika-assigned rows for this selection.</td></tr>';
+      document.getElementById("uawso-tfoot").innerHTML = "";
+      renderPagination(0, 0, 0, rows, total);
+      state.lastFilteredRows = sorted;
+      return;
+    }
+
+    document.getElementById("uawso-tbody").innerHTML = pageRows.map(function(r){
+      var imp = r.improvementStatus ? ' <span class="undef">('+r.improvementStatus+')</span>' : '';
+      return '<tr>' +
+        '<td>'+r.asin+'</td><td class="uawso-image-cell">'+imageCell(r)+'</td>' +
+        '<td>'+fmtMoney(r.fbmSales)+'</td><td>'+r.fbmOrders.toLocaleString()+'</td>' +
+        '<td>'+fmtMoney(r.fbaSales)+'</td><td>'+r.fbaOrders.toLocaleString()+'</td>' +
+        '<td>'+fmtMoney(r.vendorSales)+'</td><td>'+r.vendorOrders.toLocaleString()+'</td>' +
+        '<td>'+fmtMoney(r.totalSales)+'</td><td>'+r.totalOrders.toLocaleString()+'</td>' +
+        '<td>'+fmtMoney(r.previousYearSales)+'</td><td>'+fmtMoney(r.currentYearSales)+'</td>' +
+        '<td>'+r.previousYearOrders.toLocaleString()+'</td><td>'+r.currentYearOrders.toLocaleString()+'</td>' +
+        '<td>'+fmtPct(r.salesChange)+'</td><td>'+fmtPct(r.orderChange)+'</td>' +
+        '<td>'+trendSpan(r.trend)+imp+'</td>' +
+        '<td>'+fmtAchieve(r.achievementPct)+'</td>' +
+        '</tr>';
+    }).join("");
+
+    document.getElementById("uawso-tfoot").innerHTML =
+      '<tr class="uawso-total-row"><td>Total</td><td></td>' +
+      '<td>'+fmtMoney(total.fbmSales)+'</td><td>'+total.fbmOrders.toLocaleString()+'</td>' +
+      '<td>'+fmtMoney(total.fbaSales)+'</td><td>'+total.fbaOrders.toLocaleString()+'</td>' +
+      '<td>'+fmtMoney(total.vendorSales)+'</td><td>'+total.vendorOrders.toLocaleString()+'</td>' +
+      '<td>'+fmtMoney(total.totalSales)+'</td><td>'+total.totalOrders.toLocaleString()+'</td>' +
+      '<td>'+fmtMoney(total.previousYearSales)+'</td><td>'+fmtMoney(total.currentYearSales)+'</td>' +
+      '<td>'+total.previousYearOrders.toLocaleString()+'</td><td>'+total.currentYearOrders.toLocaleString()+'</td>' +
+      '<td>'+fmtPct(total.salesChange)+'</td><td>'+fmtPct(total.orderChange)+'</td><td></td>' +
+      '<td>'+fmtAchieve(total.achievementPct)+'</td></tr>';
+
+    renderPagination(state.page, totalPages, sorted.length, rows, total);
+
+    Array.prototype.forEach.call(document.querySelectorAll("#uawso-table th"), function(th){
+      th.classList.remove("sorted-asc","sorted-desc");
+      if (th.getAttribute("data-field") === sortField) th.classList.add(sortDir === "asc" ? "sorted-asc" : "sorted-desc");
+    });
+    state.lastFilteredRows = sorted;
+    updateStickyColumnOffsets();
+  }
+
+  // Renders the sticky pagination bar: page/range info, Previous/Next,
+  // and a "go to page" numeric input. `rows`/`total` are the SAME
+  // (unpaginated, filtered) values renderTable was called with - closed
+  // over here exactly like the pre-existing Prev/Next handlers were, so
+  // navigation re-renders against the correct filter/sort state without a
+  // second, competing pagination mechanism.
+  function renderPagination(page, totalPages, filteredCount, rows, total) {
+    var perPage = parseInt(document.getElementById("f-rows-per-page").value, 10);
+    var startRow = filteredCount === 0 ? 0 : (page - 1) * perPage + 1;
+    var endRow = filteredCount === 0 ? 0 : Math.min(page * perPage, filteredCount);
+    var rangeText = filteredCount === 0
+      ? "Showing 0 of 0"
+      : "Showing " + startRow.toLocaleString() + "–" + endRow.toLocaleString() + " of " + filteredCount.toLocaleString();
+
+    document.getElementById("uawso-pagination").innerHTML =
+      '<div class="uawso-pagination-info">' +
+        '<span>Page ' + page + ' of ' + totalPages + '</span>' +
+        '<span>' + rangeText + '</span>' +
+      '</div>' +
+      '<div class="uawso-pagination-controls">' +
+        '<button id="pg-prev" type="button" aria-label="Previous page" ' + (page<=1?'disabled':'') + '>Previous</button>' +
+        '<label class="uawso-pagination-goto-label" for="pg-goto">Go to page</label>' +
+        '<input type="number" id="pg-goto" min="1" max="' + Math.max(totalPages,1) + '" step="1" ' +
+          'value="' + (page > 0 ? page : "") + '" aria-label="Go to page" ' + (totalPages===0?'disabled':'') + '>' +
+        '<button id="pg-goto-btn" type="button" ' + (totalPages===0?'disabled':'') + '>Go</button>' +
+        '<button id="pg-next" type="button" aria-label="Next page" ' + (page>=totalPages?'disabled':'') + '>Next</button>' +
+      '</div>';
+
+    var prevBtn = document.getElementById("pg-prev"), nextBtn = document.getElementById("pg-next");
+    var gotoInput = document.getElementById("pg-goto"), gotoBtn = document.getElementById("pg-goto-btn");
+    if (prevBtn) prevBtn.onclick = function(){ state.page = Math.max(1, page - 1); renderTable(rows, total); };
+    if (nextBtn) nextBtn.onclick = function(){ state.page = Math.min(totalPages, page + 1); renderTable(rows, total); };
+    if (gotoBtn) gotoBtn.onclick = function(){ attemptGoToPage(gotoInput.value, totalPages, rows, total); };
+    if (gotoInput) {
+      gotoInput.addEventListener("keydown", function(e){
+        if (e.key === "Enter") { e.preventDefault(); attemptGoToPage(gotoInput.value, totalPages, rows, total); }
+      });
+    }
+  }
+
+  // Validates and navigates to a user-entered page number. Blank, zero,
+  // negative, decimal, and non-numeric input are rejected with a message
+  // (never crash, never silently no-op); a valid but out-of-range whole
+  // number is clamped safely to the nearest valid page rather than
+  // rejected, per the governing task's "reject ... or clamp safely"
+  // choice - documented here as the single, consistent rule this report
+  // applies.
+  function attemptGoToPage(rawValue, totalPages, rows, total) {
+    var s = String(rawValue == null ? "" : rawValue).trim();
+    if (totalPages === 0) { showError("There are no pages to go to for the current filter selection."); return; }
+    if (s === "") { showError("Enter a page number to go to."); return; }
+    if (!/^[0-9]+$/.test(s)) { showError("Page number must be a whole number between 1 and " + totalPages + "."); return; }
+    var n = parseInt(s, 10);
+    if (n < 1) { showError("Page number must be at least 1."); return; }
+    if (n > totalPages) { n = totalPages; }
+    document.getElementById("uawso-messages").innerHTML = "";
+    state.page = n;
+    renderTable(rows, total);
+  }
+
+  // Measures the ACTUAL rendered width of column 1 (ASIN) and sets it as a
+  // CSS custom property so column 2 (Image) sticks immediately to its
+  // right, with no gap and no overlap - never a hardcoded/guessed pixel
+  // value. Re-measured after every table render since content (and
+  // therefore column width) can change with filters/sorting.
+  function updateStickyColumnOffsets() {
+    var firstHeaderCell = document.querySelector("#uawso-table thead th:first-child");
+    if (!firstHeaderCell) return;
+    var width = firstHeaderCell.getBoundingClientRect().width;
+    if (width > 0) {
+      document.getElementById("uawso-table").style.setProperty("--uawso-col1-width", width + "px");
+    }
+  }
+
+  function renderCoverageNotes(rows) {
+    var noSales = rows.filter(function(r){ return r.currentYearSales === 0 && r.previousYearSales === 0; }).length;
+    document.getElementById("cov-no-sales").textContent = noSales + " of " + rows.length + " visible rows have zero Sales (both years) for the currently selected period";
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("#uawso-table th"), function(th){
+    th.addEventListener("click", function(){
+      var field = th.getAttribute("data-field");
+      if (!field || field === "image") return;
+      var curField = document.getElementById("f-sort-field").value;
+      var curDir = document.getElementById("f-sort-dir").value;
+      if (curField === field) document.getElementById("f-sort-dir").value = curDir === "asc" ? "desc" : "asc";
+      else { document.getElementById("f-sort-field").value = field; document.getElementById("f-sort-dir").value = "desc"; }
+      // Sorting retains the current page when it is still valid for the
+      // (unchanged) filtered row count - renderTable() clamps it to the
+      // last valid page automatically if it is not. Does not reset to 1.
+      render();
+    });
+  });
+
+  document.getElementById("f-mode").addEventListener("change", updateModeVisibility);
+  document.getElementById("btn-apply").addEventListener("click", function(){ state.page = 1; render(); });
+  document.getElementById("btn-reset").addEventListener("click", function(){ resetFilters(); state.page = 1; render(); });
+  document.getElementById("f-rows-per-page").addEventListener("change", function(){ state.page = 1; render(); });
+  document.getElementById("btn-csv").addEventListener("click", function(){ downloadCsv(state.lastFilteredRows, "filtered"); });
+
+  function csvEscape(v) {
+    var s = String(v);
+    if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  function downloadCsv(rows, label) {
+    var headers = ["ASIN","Image URL",
+      "FBM Sales","FBM Orders",
+      "FBA Sales","FBA Orders",
+      "Vendor Sales","Vendor Orders",
+      "Total Sales","Total Orders",
+      "PY Sales","CY Sales","PY Orders","CY Orders",
+      "Sales Change %","Order Change %","Trend","Achievement %"];
+    var lines = [headers.join(",")];
+    var sorted = sortRows(rows);
+    sorted.forEach(function(r){
+      lines.push([
+        r.asin, r.imageUrl ? r.imageUrl : "No image available",
+        r.fbmSales.toFixed(2), r.fbmOrders,
+        r.fbaSales.toFixed(2), r.fbaOrders,
+        r.vendorSales.toFixed(2), r.vendorOrders,
+        r.totalSales.toFixed(2), r.totalOrders,
+        r.previousYearSales.toFixed(2), r.currentYearSales.toFixed(2),
+        r.previousYearOrders, r.currentYearOrders,
+        r.salesChange === null ? "" : (r.salesChange*100).toFixed(2)+"%",
+        r.orderChange === null ? "" : (r.orderChange*100).toFixed(2)+"%",
+        r.trend,
+        r.achievementPct === null ? "" : r.achievementPct.toFixed(2)+"%",
+      ].map(csvEscape).join(","));
+    });
+    var csvContent = lines.join("\r\n");
+    var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var mode = document.getElementById("f-mode").value;
+    a.href = url;
+    a.download = "UAWSO_" + mode + "_" + label + "_" + sorted.length + "rows.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function resetFilters() {
+    document.getElementById("f-mode").value = "MTD";
+    document.getElementById("f-date").value = "";
+    document.getElementById("f-month").value = "";
+    document.getElementById("f-week-start").value = "";
+    document.getElementById("f-week-end").value = "";
+    document.getElementById("f-custom-start").value = "";
+    document.getElementById("f-custom-end").value = "";
+    Object.keys(selectedAsins).forEach(function(k){ delete selectedAsins[k]; });
+    asinDropdown.updateCount();
+    document.getElementById("f-search").value = "";
+    document.getElementById("f-trend").value = "";
+    document.getElementById("f-sort-field").value = "totalSales";
+    document.getElementById("f-sort-dir").value = "desc";
+    document.getElementById("f-rows-per-page").value = "50";
+    updateModeVisibility();
+  }
+
+  updateModeVisibility();
+  render();
+})();
+</script>
+
+</body>
+</html>

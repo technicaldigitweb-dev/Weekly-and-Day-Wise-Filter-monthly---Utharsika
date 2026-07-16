@@ -1,0 +1,9 @@
+metric,value
+current_assigned_asin_count,1723
+previous_assigned_asin_count_baseline_2026-07-15,1723
+added_asins,0
+removed_asins,0
+asins_with_duplicate_assignment_rows,0
+max_assignment_rows_per_asin,1
+duplicate_order_item_info_from_assignment_join,0
+notes,"Assigned-ASIN scope is byte-for-byte stable vs the REQ-01-D03/REQ-02-D01 baseline recorded earlier the same day. Verified via COUNT(*) per ref_id GROUP BY - zero ASINs have more than one assignment row, so the assignment join cannot multiply order_transaction rows."

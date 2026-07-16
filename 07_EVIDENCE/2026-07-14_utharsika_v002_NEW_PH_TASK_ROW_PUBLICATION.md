@@ -1,0 +1,121 @@
+# UAWSO v002 — New ph_task Row Publication
+
+**What this asset is:** Record of inserting the validated, refreshed v002 dashboard into `tech_team_outputs.ph_task` as a **new row**, per explicit user approval, alongside (not replacing) the existing v001 row.
+
+**Owner:** Satheskanth
+**Status:** **PASS** — inserted, verified, committed.
+
+## User Approval
+
+The user explicitly approved inserting the validated refreshed v002 dashboard into `tech_team_outputs.ph_task` as a new row in this turn's request, with an explicit instruction **not** to update, replace, archive, or delete the existing row (`id=157`, `task_id=UAWSO-2026-07-10-utharsika-v001`).
+
+## ph_task Schema (read-only inspection, confirmed before any write)
+
+`tech_team_outputs.ph_task` — 17 columns, primary key `id` (integer, backed by sequence `tech_team_outputs.ph_task_id_seq`, confirmed via `pg_get_serial_sequence`), no other unique/foreign-key constraints found.
+
+| Column | Type | Nullable | Default |
+|---|---|---|---|
+| id | integer | NO | (sequence, via `nextval`) |
+| project_name | text | NO | — |
+| project_code | text | NO | — |
+| task_name | text | NO | — |
+| task_id | text | YES | — |
+| team | text | YES | — |
+| developer | text | YES | — |
+| assigned_user | text | YES | — |
+| html_content | text | YES | — |
+| description | text | YES | — |
+| phase_level | integer | NO | 0 |
+| version_level | integer | NO | 0 |
+| version_status | text | YES | — |
+| action_took_by | text | YES | — |
+| action_took_date_time | timestamptz | YES | — |
+| created_at | timestamptz | YES | now() |
+| updated_at | timestamptz | YES | now() |
+| assigned_user_team | text | YES | — |
+
+**Field mapping used** (no columns were invented): `task_id`→`task_id`, `project_code`→`project_code`, `assigned_user`→`assigned_user`, `assigned_team`→`assigned_user_team`, `title/task name`→`task_name`, `html_content`→`html_content`, `version_level`→`version_level`, `status`→`version_status`, `created_at`/`updated_at`→same. **No dedicated columns exist for "requirement ID", "evidence path", or "source path"** — this metadata was folded into the `description` field as text (referencing the exact file paths), since inventing new columns was explicitly disallowed.
+
+**Note on the wider table:** this is a shared, actively-used production table — rows up to `id=236` exist at query time, spanning multiple unrelated projects and developers (e.g. `EBAYAHD`, `PH-PERF`, `frrc`), confirming this insert affects a live, shared system, not an isolated sandbox.
+
+## Local Asset Verification (before insert)
+
+| Check | Required | Actual | Match |
+|---|---|---|---|
+| SHA-256 | `60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff` | `60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff` | ✅ |
+| File size | — | 5,421,905 bytes | — |
+| Minimum embedded date | 2025-01-01 | 2025-01-01 | ✅ |
+| Maximum embedded date | 2026-07-13 | 2026-07-13 | ✅ |
+| Assigned ASIN count | 1,723 | 1,723 | ✅ |
+
+All required values matched exactly — proceeded.
+
+## Duplicate Checks (before insert)
+
+| Check | Result |
+|---|---|
+| Exact proposed `task_id` (`UAWSO-2026-07-14-utharsika-v002`) match count | **0** |
+| Existing UAWSO rows (any) | 1 (id=157, task_id=`UAWSO-2026-07-10-utharsika-v001`) |
+| Existing row's stored HTML SHA-256 | `60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff` (identical to the new content — expected, since row 157 was already refreshed to this exact content in the prior task; the new row intentionally duplicates this HTML under a distinct `task_id`, per explicit instruction) |
+
+No duplicate `task_id` found — proceeded with insert.
+
+## Insert Transaction
+
+Performed inside an explicit transaction:
+1. Re-confirmed 0 duplicate `task_id` rows (inside the transaction).
+2. Re-confirmed existing row 157's identity before inserting.
+3. `INSERT ... VALUES (nextval('tech_team_outputs.ph_task_id_seq'), ...) RETURNING id` — **id was never copied from row 157**; the table's own sequence generated it.
+4. Re-read the newly inserted row and ran 7 pre-commit checks (task_id, project_code, assigned_user, assigned_user_team, version_level, HTML SHA-256, new id ≠ 157) — **all 7 passed**.
+5. Re-read row 157 within the same transaction and confirmed its `task_id` and HTML hash were unchanged.
+6. **Committed** only after every check passed.
+
+## Post-Commit Validation
+
+| Check | Result |
+|---|---|
+| Rows with new `task_id` | **1** |
+| Stored HTML SHA-256 matches local | **YES** (`60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff`) |
+| Stored HTML contains `2026-07-13` marker | **YES** |
+| `project_code` | UAWSO |
+| `assigned_user` | utharsika |
+| `version_level` | 2 |
+| Existing row 157 still present, unchanged | **YES** (`task_id` and HTML hash identical before/after) |
+| Total UAWSO rows after insert | **2** (row 157 + new row 237) |
+| Duplicate row inserted | **NO** |
+
+## Inserted Row Detail
+
+| Field | Value |
+|---|---|
+| id | **237** (auto-generated by `ph_task_id_seq`, not copied from 157) |
+| task_id | `UAWSO-2026-07-14-utharsika-v002` |
+| task_name | Utharsika Weekly and Day Wise Sales Comparison v002 |
+| project_code | UAWSO |
+| project_name | Utharsika Amazon UK Daily, Weekly and Month-to-Date Sales and Orders Report |
+| team | PH Team |
+| developer | Satheskanth |
+| assigned_user | utharsika |
+| assigned_user_team | ph_priors |
+| phase_level | 1 |
+| version_level | 2 |
+| version_status | released (matches the established convention across all other rows in the table) |
+| html_content length | 5,421,893 characters |
+| html SHA-256 | `60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff` |
+| created_at | 2026-07-14 15:54:10.089775+05:30 |
+| updated_at | 2026-07-14 15:54:10.089775+05:30 |
+| description | References the exact evidence file paths (reference CSV, June KPI reference validation, monthly completeness reconciliation) since no dedicated evidence/source-path columns exist in this schema |
+
+## Existing Row (id=157) — Confirmed Unchanged
+
+| Field | Before insert | After commit |
+|---|---|---|
+| task_id | UAWSO-2026-07-10-utharsika-v001 | UAWSO-2026-07-10-utharsika-v001 |
+| html_content SHA-256 | `60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff` | `60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff` |
+| updated_at | 2026-07-14 15:06:09.792767+05:30 | 2026-07-14 15:06:09.792767+05:30 (unchanged) |
+
+Row 157 was not updated, replaced, archived, or deleted.
+
+## Final Verdict: **PASS**
+
+The new row was inserted successfully as its own, distinct `ph_task` record (id=237), using the table's own PK sequence, verified byte-for-byte identical to the locally validated v002 HTML both pre- and post-commit. The existing row (id=157) is confirmed unchanged. No unrelated rows were touched (total table row count outside the UAWSO project was not queried further, since the insert used a tightly-scoped, sequence-generated new id and could not have affected any other row).

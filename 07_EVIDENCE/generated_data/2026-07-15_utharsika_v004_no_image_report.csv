@@ -1,0 +1,26 @@
+asin,reason
+B08TLZQRH5,no valid listing_data row (which_channel=1, market_place='UK', wrong_sku=0)
+B08XNSM6GD,no valid listing_data row
+B097KBBBPK,no valid listing_data row
+B0BW4NG3GP,no valid listing_data row
+B0CB89CBCQ,no valid listing_data row
+B0CBC1GDL6,no valid listing_data row
+B0CBC2P2F2,no valid listing_data row
+B0CS9PCNSX,no valid listing_data row
+B0DC49S375,no valid listing_data row
+B0DDH33FJJ,no valid listing_data row
+B0DDTH18X8,no valid listing_data row
+B0GLZ4SY9Q,no valid listing_data row
+B0GMP89W89,no valid listing_data row
+B0GMRH36DQ,no valid listing_data row
+B0GTY7S581,no valid listing_data row
+B0GTYJCJYT,no valid listing_data row
+B0H394ZWB5,no valid listing_data row
+B08THMMJ84,listing_data row(s) exist but every main_image_url is blank/null
+B0BX441NG5,listing_data row(s) exist but every main_image_url is blank/null
+B0CVQ31WVH,listing_data row(s) exist but every main_image_url is blank/null
+B0F1MNQMG7,listing_data row(s) exist but every main_image_url is blank/null
+B0F1MPRGYR,listing_data row(s) exist but every main_image_url is blank/null
+B0F1MR6F3P,listing_data row(s) exist but every main_image_url is blank/null
+B0F3NPV8P9,listing_data row(s) exist but every main_image_url is blank/null
+total_count,24

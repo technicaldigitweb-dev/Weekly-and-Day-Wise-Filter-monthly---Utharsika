@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>__UAWSO_HEAD_TITLE__</title>
+<style>
+  :root {
+    --ink:#1b2430; --muted:#5b6b7c; --border:#d9e0e6; --bg:#f7f9fb; --card:#ffffff;
+    --up:#1a7f4b; --down:#b23b3b; --flat:#7a6a1f; --accent:#22405b; --accent-bg:#eef2f5;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; color: var(--ink); background: var(--bg); margin: 0; padding: 20px; }
+  .uawso-header { border-bottom: 3px solid var(--ink); padding-bottom: 12px; margin-bottom: 16px; }
+  .uawso-header h1 { margin: 0 0 6px 0; font-size: 1.35rem; }
+  .uawso-meta { font-size: 0.8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 12px 20px; }
+  .uawso-meta span strong { color: var(--ink); }
+  .uawso-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 16px; }
+  .uawso-kpi { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .uawso-kpi .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .uawso-kpi .value { font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
+  .uawso-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 16px; }
+  .uawso-panel h2 { margin: 0 0 10px 0; font-size: 0.95rem; }
+  .uawso-filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 10px; align-items: end; }
+  .uawso-field { display: flex; flex-direction: column; gap: 4px; position: relative; }
+  .uawso-field label { font-size: 0.72rem; color: var(--muted); }
+  .uawso-field select, .uawso-field input { padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem; }
+  .uawso-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .uawso-btn { padding: 7px 16px; border-radius: 4px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; font-size: 0.85rem; }
+  .uawso-btn.secondary { background: #fff; color: var(--accent); }
+  .uawso-hidden { display: none !important; }
+  .uawso-summary { font-size: 0.82rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .uawso-summary strong { color: var(--ink); }
+  .uawso-note { background: #fff7e0; border: 1px solid #e3c67a; color: #6b5410; padding: 8px 10px; border-radius: 4px; font-size: 0.8rem; margin-top: 8px; }
+  .uawso-error { background: #fdecec; border: 1px solid #e3a3a3; color: #7a1f1f; padding: 8px 10px; border-radius: 4px; font-size: 0.8rem; margin-top: 8px; }
+  table.uawso-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; background: var(--card); }
+  table.uawso-table th, table.uawso-table td { border: 1px solid var(--border); padding: 5px 7px; text-align: right; white-space: nowrap; }
+  table.uawso-table th { background: var(--accent-bg); text-align: center; cursor: pointer; user-select: none; }
+  table.uawso-table th.sorted-asc::after { content: " \25B2"; }
+  table.uawso-table th.sorted-desc::after { content: " \25BC"; }
+  table.uawso-table td:first-child, table.uawso-table td:nth-child(2), table.uawso-table td:nth-child(3) { text-align: left; }
+  tr.uawso-total-row { font-weight: 700; background: var(--accent-bg); }
+  tr.uawso-no-sku { background: #fbf6ec; }
+  tr.uawso-vendor-row { background: #eef6fb; }
+  .row-type-tag { font-size: 0.68rem; padding: 1px 5px; border-radius: 3px; background: var(--accent-bg); color: var(--muted); }
+  .trend-up { color: var(--up); font-weight: 700; }
+  .trend-down { color: var(--down); font-weight: 700; }
+  .trend-flat { color: var(--flat); font-weight: 700; }
+  .undef { color: var(--muted); font-style: italic; }
+  .uawso-table-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--border); border-radius: 6px; }
+  .uawso-pagination { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; font-size: 0.8rem; color: var(--muted); }
+  .uawso-pagination button { padding: 4px 10px; border: 1px solid var(--border); background: #fff; border-radius: 4px; cursor: pointer; }
+  .uawso-empty { padding: 20px; text-align: center; color: var(--muted); }
+  .uawso-footer { margin-top: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; font-size: 0.78rem; color: var(--muted); }
+  .uawso-footer ul { margin: 6px 0 0 0; padding-left: 18px; }
+  .uawso-coverage-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
+  .uawso-coverage-table td, .uawso-coverage-table th { border: 1px solid var(--border); padding: 5px 8px; text-align: left; }
+  .uawso-msdd { position: relative; }
+  .uawso-msdd-toggle { display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff; }
+  .uawso-msdd-panel { display: none; position: absolute; z-index: 20; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--border); border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); max-height: 260px; overflow-y: auto; padding: 6px; }
+  .uawso-msdd.open .uawso-msdd-panel { display: block; }
+  .uawso-msdd-search { width: 100%; padding: 5px 6px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.82rem; }
+  .uawso-msdd-actions { display: flex; gap: 6px; margin-bottom: 6px; }
+  .uawso-msdd-actions button { font-size: 0.72rem; padding: 3px 8px; border: 1px solid var(--border); background: var(--accent-bg); border-radius: 3px; cursor: pointer; }
+  .uawso-msdd-option { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; padding: 2px 4px; }
+  .uawso-msdd-option label { cursor: pointer; }
+  .uawso-msdd-more { font-size: 0.72rem; color: var(--muted); padding: 4px; }
+</style>
+</head>
+<body>
+
+<div class="uawso-header">
+  <h1>__UAWSO_HEAD_TITLE__</h1>
+  <div class="uawso-meta">
+    <span><strong>Project code:</strong> __UAWSO_PROJECT_CODE__</span>
+    <span><strong>Assigned user:</strong> __UAWSO_ASSIGNED_USER__</span>
+    <span><strong>Version:</strong> __UAWSO_VERSION__</span>
+    <span><strong>Generated (Asia/Colombo):</strong> __UAWSO_GENERATED_TS__</span>
+    <span><strong>Latest completed date:</strong> __UAWSO_LATEST_COMPLETED_DATE__</span>
+    <span><strong>Embedded history:</strong> __UAWSO_HISTORY_START__ &rarr; __UAWSO_HISTORY_END__</span>
+    <span><strong>Selectable current period:</strong> __UAWSO_SELECTABLE_START__ &rarr; __UAWSO_SELECTABLE_END__</span>
+    <span><strong>Assigned ASINs:</strong> __UAWSO_ASSIGNED_ASIN_COUNT__</span>
+    <span><strong>ASINs with SKU:</strong> __UAWSO_ASSIGNED_SKU_COUNT__</span>
+    <span><strong>Template version:</strong> __UAWSO_TEMPLATE_VERSION__</span>
+  </div>
+</div>
+
+<div class="uawso-kpis" id="uawso-kpis"></div>
+
+<div class="uawso-panel">
+  <h2>Filters</h2>
+  <div class="uawso-filter-grid">
+    <div class="uawso-field">
+      <label for="f-mode">Comparison mode</label>
+      <select id="f-mode">
+        <option value="MTD" selected>Month-to-Date</option>
+        <option value="DAILY">Daily</option>
+        <option value="WEEKLY">Weekly</option>
+        <option value="MONTH">Month</option>
+        <option value="CUSTOM">Custom Date Range</option>
+      </select>
+    </div>
+    <div class="uawso-field" id="wrap-particular-date">
+      <label for="f-date">Particular date</label>
+      <input type="date" id="f-date">
+    </div>
+    <div class="uawso-field" id="wrap-month">
+      <label for="f-month">Month</label>
+      <input type="month" id="f-month">
+    </div>
+    <div class="uawso-field" id="wrap-week-start">
+      <label for="f-week-start">Week start (Monday)</label>
+      <input type="date" id="f-week-start">
+    </div>
+    <div class="uawso-field" id="wrap-week-end">
+      <label for="f-week-end">Week end</label>
+      <input type="date" id="f-week-end" disabled>
+    </div>
+    <div class="uawso-field" id="wrap-custom-start">
+      <label for="f-custom-start">Custom start date</label>
+      <input type="date" id="f-custom-start">
+    </div>
+    <div class="uawso-field" id="wrap-custom-end">
+      <label for="f-custom-end">Custom end date</label>
+      <input type="date" id="f-custom-end">
+    </div>
+
+    <div class="uawso-field">
+      <label>ASIN <span id="asin-selected-count">(all)</span></label>
+      <div class="uawso-msdd" id="asin-dropdown">
+        <div class="uawso-msdd-toggle" id="asin-dropdown-toggle">Select ASINs &#9662;</div>
+        <div class="uawso-msdd-panel">
+          <input type="text" class="uawso-msdd-search" id="asin-search" placeholder="Search ASIN...">
+          <div class="uawso-msdd-actions">
+            <button type="button" id="asin-select-all">Select All</button>
+            <button type="button" id="asin-clear-all">Clear All</button>
+          </div>
+          <div id="asin-options"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="uawso-field">
+      <label>SKU <span id="sku-selected-count">(all)</span></label>
+      <div class="uawso-msdd" id="sku-dropdown">
+        <div class="uawso-msdd-toggle" id="sku-dropdown-toggle">Select SKUs &#9662;</div>
+        <div class="uawso-msdd-panel">
+          <input type="text" class="uawso-msdd-search" id="sku-search" placeholder="Search SKU...">
+          <div class="uawso-msdd-actions">
+            <button type="button" id="sku-select-all">Select All</button>
+            <button type="button" id="sku-clear-all">Clear All</button>
+          </div>
+          <div id="sku-options"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="uawso-field">
+      <label for="f-search">Global search (ASIN/SKU)</label>
+      <input type="text" id="f-search" placeholder="type to search">
+    </div>
+    <div class="uawso-field">
+      <label for="f-trend">Trend</label>
+      <select id="f-trend">
+        <option value="">Any</option>
+        <option value="UP">UP</option>
+        <option value="DOWN">DOWN</option>
+        <option value="NO CHANGE">NO CHANGE</option>
+      </select>
+    </div>
+    <div class="uawso-field">
+      <label for="f-sort-field">Sort field</label>
+      <select id="f-sort-field">
+        <option value="asin">ASIN</option>
+        <option value="sku">SKU</option>
+        <option value="fbmSales">FBM Sales</option>
+        <option value="fbaSales">FBA Sales</option>
+        <option value="vendorSales">Vendor Sales</option>
+        <option value="currentYearSales" selected>CY Sales</option>
+        <option value="previousYearSales">PY Sales</option>
+        <option value="salesChange">Sales Change</option>
+        <option value="trend">Trend</option>
+        <option value="achievementPct">Achievement %</option>
+      </select>
+    </div>
+    <div class="uawso-field">
+      <label for="f-sort-dir">Sort direction</label>
+      <select id="f-sort-dir">
+        <option value="desc" selected>Descending</option>
+        <option value="asc">Ascending</option>
+      </select>
+    </div>
+    <div class="uawso-field">
+      <label for="f-rows-per-page">Rows per page</label>
+      <select id="f-rows-per-page">
+        <option value="25">25</option>
+        <option value="50" selected>50</option>
+        <option value="100">100</option>
+        <option value="250">250</option>
+      </select>
+    </div>
+  </div>
+  <div class="uawso-actions">
+    <button class="uawso-btn" id="btn-apply">Apply</button>
+    <button class="uawso-btn secondary" id="btn-reset">Reset</button>
+    <button class="uawso-btn secondary" id="btn-csv">Download CSV</button>
+  </div>
+  <div id="uawso-messages"></div>
+</div>
+
+<div class="uawso-panel">
+  <h2>Active comparison</h2>
+  <div class="uawso-summary" id="uawso-summary"></div>
+</div>
+
+<div class="uawso-table-wrap">
+  <table class="uawso-table" id="uawso-table">
+    <thead>
+      <tr>
+        <th data-field="asin">ASIN</th>
+        <th data-field="sku">SKU</th>
+        <th data-field="rowType">Row Type</th>
+        <th data-field="fbmSales">FBM Sales</th>
+        <th data-field="fbmOrders">FBM Orders</th>
+        <th data-field="fbaSales">FBA Sales</th>
+        <th data-field="fbaOrders">FBA Orders</th>
+        <th data-field="vendorSales">Vendor Sales</th>
+        <th data-field="vendorUnits">Vendor Units</th>
+        <th data-field="previousYearSales">PY Sales</th>
+        <th data-field="currentYearSales">CY Sales</th>
+        <th data-field="salesChange">Sales Change</th>
+        <th data-field="trend">Trend</th>
+        <th data-field="achievementPct">Achievement %</th>
+      </tr>
+    </thead>
+    <tbody id="uawso-tbody"></tbody>
+    <tfoot id="uawso-tfoot"></tfoot>
+  </table>
+  <div class="uawso-pagination" id="uawso-pagination"></div>
+</div>
+
+<div class="uawso-panel">
+  <h2>Data Coverage Notes</h2>
+  <table class="uawso-coverage-table">
+    <tr><td>Total assigned ASINs</td><td>__UAWSO_ASSIGNED_ASIN_COUNT__</td></tr>
+    <tr><td>Total table rows (one ASIN+SKU per row, plus one blank row per no-SKU or Vendor-only ASIN)</td><td id="cov-total-rows">__UAWSO_TOTAL_ROW_COUNT__</td></tr>
+    <tr><td>ASIN+SKU rows</td><td>__UAWSO_SKU_ROW_COUNT__</td></tr>
+    <tr><td>ASINs without any SKU mapping (no Completed Amazon UK transaction, ever)</td><td>__UAWSO_NO_SKU_COUNT__</td></tr>
+    <tr><td>Vendor-carrying rows (one per ASIN with Vendor data - never duplicated across SKU rows)</td><td>__UAWSO_VENDOR_ROW_COUNT__</td></tr>
+    <tr><td>ASINs without sales history in the selected period</td><td id="cov-no-sales">(recalculated per filter selection)</td></tr>
+    <tr><td>ASINs excluded from the table</td><td>0 - every assigned ASIN is always represented by at least one row.</td></tr>
+  </table>
+  <div class="uawso-note">
+    Row grain: <strong>one row = one ASIN + one SKU</strong>. An ASIN with multiple SKUs produces one row per SKU (never a comma-joined SKU list). An ASIN with no SKU mapping produces exactly one row with a blank SKU. Vendor sales (<code>public.vendor_sales</code>, ASIN-only, no SKU) are carried on exactly one dedicated row per ASIN - either that ASIN's existing blank no-SKU row, or (if the ASIN has SKU rows) one additional blank "Vendor" row - never attached to a SKU-specific row, so Vendor figures are never duplicated or multiplied across an ASIN's SKUs.
+  </div>
+  <div class="uawso-note">
+    Vendor sales are sourced from <code>public.vendor_sales</code>, which stores <strong>periods</strong> (start/end date ranges), not daily rows - some periods are single-day, some are full-month. A period's entire revenue/units is attributed to any selected date range it overlaps, without proration. This can over- or under-attribute Vendor figures at month-boundary edges when a monthly-bucketed Vendor period is compared against a shorter (e.g. daily or weekly) selection - a source-data granularity limitation, not a calculation error. <code>vendor_sales</code> has no SKU column and no order-level key; "Vendor Units" is a unit count, not a distinct-order count like FBM/FBA Orders - they are never combined into one column.
+  </div>
+</div>
+
+<div class="uawso-footer">
+  <strong>Methodology</strong>
+  <ul>
+    <li>Row grain: one ASIN + one SKU per row (or one ASIN + blank SKU for no-mapping/Vendor-only rows). Utharsika-assigned Amazon products only (resolved via public.user &rarr; public.ph_categories &rarr; public.ph_cate_products, DISTINCT applied - the source assignment tables contain a known uniform 2x raw-row duplication that DISTINCT removes). The table always starts from the complete assigned-ASIN master (__UAWSO_ASSIGNED_ASIN_COUNT__ ASINs) and left-joins transaction/vendor data - it never starts from transaction data.</li>
+    <li>FBM/FBA: Amazon UK only (source_name='AMAZON', market_place='UK'), Completed orders only, aggregated at ASIN+SKU grain and split by the <code>fba_sales</code> flag. All UK Amazon accounts included, no single-account restriction.</li>
+    <li>Vendor: <code>public.vendor_sales</code>, <code>ordered_revenue</code>/<code>ordered_units</code>, attributed once per ASIN. See Data Coverage Notes above for the period-overlap limitation.</li>
+    <li>Data included through __UAWSO_LATEST_COMPLETED_DATE__; current-day partial data excluded.</li>
+    <li>PY/CY Sales = FBM Sales + FBA Sales + Vendor Sales for that row. FBM/FBA Orders and Vendor Units are always shown separately, never combined into one ambiguous column.</li>
+    <li>Trend is Sales-based only (on CY vs PY Sales): UP / DOWN / NO CHANGE. Previous=0,Current&gt;0 &rarr; UP. Previous=0,Current=0 &rarr; NO CHANGE.</li>
+    <li>Achievement % measures progress against 130% of the equivalent prior-year period's Sales. Undefined ("&mdash;") when the prior-year base is zero and current &gt; 0 &mdash; never fabricated.</li>
+    <li>Historical data start: __UAWSO_HISTORY_START__. Report version: __UAWSO_VERSION__.</li>
+  </ul>
+</div>
+
+<script type="application/json" id="uawso-product-master-full">__UAWSO_PRODUCT_MASTER_FULL_JSON__</script>
+<script type="application/json" id="uawso-daily-aggregates-split">__UAWSO_DAILY_AGGREGATES_SPLIT_JSON__</script>
+<script type="application/json" id="uawso-vendor-periods">__UAWSO_VENDOR_PERIODS_JSON__</script>
+
+<script>
+__UAWSO_ENGINE_JS__
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var Engine = window.UAWSOEngine;
+
+  var HISTORY_START = "__UAWSO_HISTORY_START__";
+  var HISTORY_END = "__UAWSO_HISTORY_END__";
+  var SELECTABLE_START = "__UAWSO_SELECTABLE_START__";
+  var SELECTABLE_END = "__UAWSO_SELECTABLE_END__";
+  var LATEST_COMPLETED = "__UAWSO_LATEST_COMPLETED_DATE__";
+
+  var PRODUCT_MASTER_FULL = JSON.parse(document.getElementById("uawso-product-master-full").textContent);
+  var DAILY_SPLIT = JSON.parse(document.getElementById("uawso-daily-aggregates-split").textContent);
+  var VENDOR_PERIODS = JSON.parse(document.getElementById("uawso-vendor-periods").textContent);
+
+  var SPLIT_INDEX = Engine.buildDailyIndexSplit(DAILY_SPLIT);
+  var CANONICAL_ROWS = Engine.buildCanonicalRows(PRODUCT_MASTER_FULL, VENDOR_PERIODS);
+
+  var ASIN_LIST = PRODUCT_MASTER_FULL.map(function(p){ return p.asin; }).sort();
+  var SKU_LIST = (function(){
+    var set = {};
+    PRODUCT_MASTER_FULL.forEach(function(p){ p.skus.forEach(function(s){ set[s]=true; }); });
+    return Object.keys(set).sort();
+  })();
+  // ASIN <-> SKU dependency maps built from the CANONICAL ROWS (so a
+  // blank-SKU Vendor/no-mapping row is still reachable when its ASIN is
+  // selected, even though it has no real SKU value of its own).
+  var ASIN_TO_SKUS = {}, SKU_TO_ASINS = {};
+  PRODUCT_MASTER_FULL.forEach(function(p){
+    ASIN_TO_SKUS[p.asin] = p.skus;
+    p.skus.forEach(function(s){
+      if (!SKU_TO_ASINS[s]) SKU_TO_ASINS[s] = [];
+      SKU_TO_ASINS[s].push(p.asin);
+    });
+  });
+
+  function parseDate(s) { return Engine.parseDate(s); }
+  function fmtDate(d) { return Engine.fmtDate(d); }
+  function addDays(d, n) { return Engine.addDays(d, n); }
+  function resolvePeriod(mode, params) {
+    return Engine.resolvePeriod(mode, params, {
+      selectableStart: SELECTABLE_START, selectableEnd: SELECTABLE_END,
+      historyStart: HISTORY_START, historyEnd: HISTORY_END,
+      latestCompleted: LATEST_COMPLETED,
+    });
+  }
+
+  // ---- Searchable multi-select dropdown component -----------------------
+  var selectedAsins = {}, selectedSkus = {};
+
+  function makeDropdown(opts) {
+    var dd = document.getElementById(opts.ddId);
+    var toggle = document.getElementById(opts.toggleId);
+    var searchEl = document.getElementById(opts.searchId);
+    var optionsEl = document.getElementById(opts.optionsId);
+    var countEl = document.getElementById(opts.countId);
+    var selectedMap = opts.selectedMap;
+
+    function visibleList() {
+      var q = searchEl.value.trim().toUpperCase();
+      var source = opts.getList();
+      return q ? source.filter(function(v){ return v.toUpperCase().indexOf(q) !== -1; }) : source;
+    }
+
+    function renderOptions() {
+      var list = visibleList();
+      var capped = list.slice(0, 300);
+      optionsEl.innerHTML = capped.map(function(v){
+        var checked = selectedMap[v] ? "checked" : "";
+        var safe = v.replace(/"/g, "&quot;");
+        return '<div class="uawso-msdd-option"><input type="checkbox" data-val="' + safe + '" ' + checked + '><label>' + v + '</label></div>';
+      }).join("");
+      if (list.length > capped.length) {
+        optionsEl.innerHTML += '<div class="uawso-msdd-more">Showing first 300 of ' + list.length + ' - refine search to see more.</div>';
+      }
+      Array.prototype.forEach.call(optionsEl.querySelectorAll('input[type="checkbox"]'), function(cb){
+        cb.addEventListener("change", function(){
+          if (cb.checked) selectedMap[cb.getAttribute("data-val")] = true;
+          else delete selectedMap[cb.getAttribute("data-val")];
+          updateCount();
+          opts.onChange();
+        });
+      });
+    }
+
+    function updateCount() {
+      var n = Object.keys(selectedMap).length;
+      countEl.textContent = n ? "(" + n + " selected)" : "(all)";
+    }
+
+    toggle.addEventListener("click", function(){
+      dd.classList.toggle("open");
+      if (dd.classList.contains("open")) renderOptions();
+    });
+    document.addEventListener("click", function(e){
+      if (!dd.contains(e.target)) dd.classList.remove("open");
+    });
+    searchEl.addEventListener("input", renderOptions);
+    document.getElementById(opts.selectAllId).addEventListener("click", function(){
+      visibleList().forEach(function(v){ selectedMap[v] = true; });
+      renderOptions(); updateCount(); opts.onChange();
+    });
+    document.getElementById(opts.clearAllId).addEventListener("click", function(){
+      Object.keys(selectedMap).forEach(function(k){ delete selectedMap[k]; });
+      renderOptions(); updateCount(); opts.onChange();
+    });
+
+    return { renderOptions: renderOptions, updateCount: updateCount };
+  }
+
+  var asinDropdown = makeDropdown({
+    ddId: "asin-dropdown", toggleId: "asin-dropdown-toggle", searchId: "asin-search",
+    optionsId: "asin-options", countId: "asin-selected-count", selectAllId: "asin-select-all",
+    clearAllId: "asin-clear-all", selectedMap: selectedAsins,
+    getList: function(){
+      if (Object.keys(selectedSkus).length) {
+        var allowed = {};
+        Object.keys(selectedSkus).forEach(function(s){ (SKU_TO_ASINS[s]||[]).forEach(function(a){ allowed[a]=true; }); });
+        return ASIN_LIST.filter(function(a){ return allowed[a]; });
+      }
+      return ASIN_LIST;
+    },
+    onChange: function(){ skuDropdown.renderOptions(); render(); },
+  });
+
+  var skuDropdown = makeDropdown({
+    ddId: "sku-dropdown", toggleId: "sku-dropdown-toggle", searchId: "sku-search",
+    optionsId: "sku-options", countId: "sku-selected-count", selectAllId: "sku-select-all",
+    clearAllId: "sku-clear-all", selectedMap: selectedSkus,
+    getList: function(){
+      if (Object.keys(selectedAsins).length) {
+        var allowed = {};
+        Object.keys(selectedAsins).forEach(function(a){ (ASIN_TO_SKUS[a]||[]).forEach(function(s){ allowed[s]=true; }); });
+        return SKU_LIST.filter(function(s){ return allowed[s]; });
+      }
+      return SKU_LIST;
+    },
+    onChange: function(){ asinDropdown.renderOptions(); render(); },
+  });
+
+  function updateModeVisibility() {
+    var mode = document.getElementById("f-mode").value;
+    var show = { DAILY: ["wrap-particular-date"], MONTH: ["wrap-month"], MTD: [], WEEKLY: ["wrap-week-start","wrap-week-end"], CUSTOM: ["wrap-custom-start","wrap-custom-end"] };
+    var all = ["wrap-particular-date","wrap-month","wrap-week-start","wrap-week-end","wrap-custom-start","wrap-custom-end"];
+    all.forEach(function(id){ document.getElementById(id).classList.add("uawso-hidden"); });
+    (show[mode]||[]).forEach(function(id){ document.getElementById(id).classList.remove("uawso-hidden"); });
+  }
+
+  function todayGuard(dateStr) { return dateStr > LATEST_COMPLETED; }
+
+  var state = { page: 1, lastFilteredRows: [] };
+
+  function showEmpty(msg) {
+    document.getElementById("uawso-tbody").innerHTML = "";
+    document.getElementById("uawso-tfoot").innerHTML = "";
+    document.getElementById("uawso-pagination").innerHTML = "";
+    document.getElementById("uawso-kpis").innerHTML = "";
+    document.getElementById("uawso-summary").innerHTML = "<span>" + msg + "</span>";
+    state.lastFilteredRows = [];
+  }
+  function showError(msg) {
+    document.getElementById("uawso-messages").innerHTML = '<div class="uawso-error">' + msg + '</div>';
+  }
+
+  // ASIN filter: show every row for the selected ASIN(s) (SKU rows AND
+  // its blank/Vendor row, if any). SKU filter: show only rows whose SKU
+  // exactly matches (blank-SKU rows never match a SKU-text filter, but
+  // remain visible whenever their ASIN is selected, per spec). Combined:
+  // valid intersection (row matches if its ASIN is selected AND (its SKU
+  // is selected OR the row has no SKU and belongs to a selected ASIN)).
+  function applyFilters(rows) {
+    var search = document.getElementById("f-search").value.trim().toUpperCase();
+    var trend = document.getElementById("f-trend").value;
+    var asinKeys = Object.keys(selectedAsins), skuKeys = Object.keys(selectedSkus);
+    return rows.filter(function(r) {
+      if (asinKeys.length && !selectedAsins[r.asin]) return false;
+      if (skuKeys.length) {
+        var skuMatches = r.sku && selectedSkus[r.sku];
+        var blankRowOfSelectedAsin = (!r.sku) && asinKeys.length && selectedAsins[r.asin];
+        // If SKUs are selected but no ASIN filter is active, a blank row
+        // cannot match a SKU-text filter (it has no SKU) - excluded, per
+        // "selecting a SKU must show only rows containing that exact SKU".
+        if (!skuMatches && !blankRowOfSelectedAsin) return false;
+      }
+      if (search) {
+        var hay = (r.asin + " " + r.sku).toUpperCase();
+        if (hay.indexOf(search) === -1) return false;
+      }
+      if (trend && r.trend !== trend) return false;
+      return true;
+    });
+  }
+
+  function fmtMoney(v){ return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmtPct(v){ return v === null ? '<span class="undef">&mdash;</span>' : (v*100).toFixed(2)+"%"; }
+  function fmtAchieve(v){ return v === null ? '<span class="undef">&mdash;</span>' : v.toFixed(2)+"%"; }
+  function trendSpan(t){ var cls = t==="UP"?"trend-up":t==="DOWN"?"trend-down":"trend-flat"; return '<span class="'+cls+'">'+t+'</span>'; }
+  function rowTypeLabel(rt) {
+    switch (rt) {
+      case "ASIN_SKU": return "ASIN + SKU";
+      case "VENDOR_ASIN_LEVEL": return "Vendor — SKU not provided by source";
+      case "NO_SKU_MAPPING": return "No SKU mapping";
+      case "NO_SKU_MAPPING_VENDOR": return "No SKU mapping + Vendor — SKU not provided by source";
+      default: return rt;
+    }
+  }
+
+  function render() {
+    document.getElementById("uawso-messages").innerHTML = "";
+    var mode = document.getElementById("f-mode").value;
+    var params = {
+      date: document.getElementById("f-date").value,
+      month: document.getElementById("f-month").value,
+      weekStart: document.getElementById("f-week-start").value,
+      customStart: document.getElementById("f-custom-start").value,
+      customEnd: document.getElementById("f-custom-end").value,
+    };
+
+    if (mode === "DAILY" && !params.date) { showEmpty("Select a date."); return; }
+    if (mode === "MONTH" && !params.month) { showEmpty("Select a month."); return; }
+    if (mode === "WEEKLY" && !params.weekStart) { showEmpty("Select a week start (Monday)."); return; }
+    if (mode === "CUSTOM" && (!params.customStart || !params.customEnd)) { showEmpty("Select both a start and end date."); return; }
+    if (mode === "DAILY" && todayGuard(params.date)) { showError("Selected date is today or in the future - latest completed date is " + LATEST_COMPLETED + "."); return; }
+    if (mode === "CUSTOM" && todayGuard(params.customEnd)) { showError("Custom end date is today or in the future."); return; }
+    if (mode === "WEEKLY" && params.weekStart) {
+      var wd = parseDate(params.weekStart).getUTCDay();
+      if (wd !== 1) { showError("Week start must be a Monday."); return; }
+      document.getElementById("f-week-end").value = fmtDate(addDays(parseDate(params.weekStart), 6));
+    }
+
+    var period;
+    try { period = resolvePeriod(mode, params); }
+    catch (e) { showError(e.message); return; }
+
+    var curSplit = Engine.sumRangeSplitByAsinSku(SPLIT_INDEX, period.cyStart, period.cyEnd);
+    var prevSplit = Engine.sumRangeSplitByAsinSku(SPLIT_INDEX, period.pyStart, period.pyEnd);
+    var curVendor = Engine.sumVendorRange(VENDOR_PERIODS, period.cyStart, period.cyEnd);
+    var prevVendor = Engine.sumVendorRange(VENDOR_PERIODS, period.pyStart, period.pyEnd);
+
+    var rows = Engine.computeRowsV3(CANONICAL_ROWS, curSplit, prevSplit, curVendor, prevVendor);
+    rows = applyFilters(rows);
+
+    var total = Engine.computeTotalV3(rows);
+    state.lastFilteredRows = rows;
+
+    renderSummary(mode, period, rows.length);
+    renderKpis(total, rows.length);
+    renderTable(rows, total);
+    renderCoverageNotes(rows);
+  }
+
+  function renderSummary(mode, period, visibleCount) {
+    var activeFilters = 0;
+    if (Object.keys(selectedAsins).length) activeFilters++;
+    if (Object.keys(selectedSkus).length) activeFilters++;
+    ["f-search","f-trend"].forEach(function(id){ if (document.getElementById(id).value) activeFilters++; });
+    var html = "";
+    html += "<span><strong>Mode:</strong> " + mode + "</span>";
+    html += "<span><strong>Current period:</strong> " + period.cyStart + " &rarr; " + period.cyEnd + "</span>";
+    html += "<span><strong>Previous-year period:</strong> " + period.pyStart + " &rarr; " + period.pyEnd + "</span>";
+    html += "<span><strong>Active ASIN filters:</strong> " + (Object.keys(selectedAsins).length || "All") + "</span>";
+    html += "<span><strong>Active SKU filters:</strong> " + (Object.keys(selectedSkus).length || "All") + "</span>";
+    html += "<span><strong>Active filter count:</strong> " + activeFilters + "</span>";
+    html += "<span><strong>Visible rows:</strong> " + visibleCount + "</span>";
+    document.getElementById("uawso-summary").innerHTML = html;
+    if (period.leapNote) document.getElementById("uawso-messages").innerHTML = '<div class="uawso-note">' + period.leapNote + '</div>';
+  }
+
+  function renderKpis(total, rowCount) {
+    var kpis = [
+      ["Previous Year Sales", fmtMoney(total.previousYearSales)],
+      ["Current Year Sales", fmtMoney(total.currentYearSales)],
+      ["Sales Change", fmtPct(total.salesChange)],
+      ["FBM Orders", total.fbmOrders.toLocaleString()],
+      ["FBA Orders", total.fbaOrders.toLocaleString()],
+      ["Vendor Units", total.vendorUnits.toLocaleString()],
+      ["Achievement %", fmtAchieve(total.achievementPct)],
+      ["Visible rows", rowCount.toLocaleString()],
+    ];
+    document.getElementById("uawso-kpis").innerHTML = kpis.map(function(k){
+      return '<div class="uawso-kpi"><div class="label">'+k[0]+'</div><div class="value">'+k[1]+'</div></div>';
+    }).join("");
+  }
+
+  var sortField = "currentYearSales", sortDir = "desc";
+
+  function sortRows(rows) {
+    sortField = document.getElementById("f-sort-field").value;
+    sortDir = document.getElementById("f-sort-dir").value;
+    return rows.slice().sort(function(a,b){
+      var av = a[sortField], bv = b[sortField];
+      if (av === null) av = -Infinity; if (bv === null) bv = -Infinity;
+      if (av < bv) return sortDir === "asc" ? -1 : 1;
+      if (av > bv) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  function renderTable(rows, total) {
+    var sorted = sortRows(rows);
+
+    var perPage = parseInt(document.getElementById("f-rows-per-page").value, 10);
+    var totalPages = Math.max(1, Math.ceil(sorted.length / perPage));
+    if (state.page > totalPages) state.page = totalPages;
+    var startIdx = (state.page - 1) * perPage;
+    var pageRows = sorted.slice(startIdx, startIdx + perPage);
+
+    if (sorted.length === 0) {
+      document.getElementById("uawso-tbody").innerHTML = '<tr><td colspan="14" class="uawso-empty">No matching Utharsika-assigned rows for this selection.</td></tr>';
+      document.getElementById("uawso-tfoot").innerHTML = "";
+      document.getElementById("uawso-pagination").innerHTML = "";
+      return;
+    }
+
+    document.getElementById("uawso-tbody").innerHTML = pageRows.map(function(r){
+      var imp = r.improvementStatus ? ' <span class="undef">('+r.improvementStatus+')</span>' : '';
+      var rowClass = r.rowType.indexOf("VENDOR") !== -1 ? ' class="uawso-vendor-row"' : (r.rowType.indexOf("NO_SKU") !== -1 ? ' class="uawso-no-sku"' : '');
+      var skuCell = r.sku ? r.sku : '<span class="undef">(none)</span>';
+      return '<tr' + rowClass + '>' +
+        '<td>'+r.asin+'</td><td>'+skuCell+'</td><td><span class="row-type-tag">'+rowTypeLabel(r.rowType)+'</span></td>' +
+        '<td>'+fmtMoney(r.fbmSales)+'</td><td>'+r.fbmOrders.toLocaleString()+'</td>' +
+        '<td>'+fmtMoney(r.fbaSales)+'</td><td>'+r.fbaOrders.toLocaleString()+'</td>' +
+        '<td>'+fmtMoney(r.vendorSales)+'</td><td>'+r.vendorUnits.toLocaleString()+'</td>' +
+        '<td>'+fmtMoney(r.previousYearSales)+'</td><td>'+fmtMoney(r.currentYearSales)+'</td>' +
+        '<td>'+fmtPct(r.salesChange)+'</td>' +
+        '<td>'+trendSpan(r.trend)+imp+'</td>' +
+        '<td>'+fmtAchieve(r.achievementPct)+'</td>' +
+        '</tr>';
+    }).join("");
+
+    document.getElementById("uawso-tfoot").innerHTML =
+      '<tr class="uawso-total-row"><td>Total</td><td></td><td></td>' +
+      '<td>'+fmtMoney(total.fbmSales)+'</td><td>'+total.fbmOrders.toLocaleString()+'</td>' +
+      '<td>'+fmtMoney(total.fbaSales)+'</td><td>'+total.fbaOrders.toLocaleString()+'</td>' +
+      '<td>'+fmtMoney(total.vendorSales)+'</td><td>'+total.vendorUnits.toLocaleString()+'</td>' +
+      '<td>'+fmtMoney(total.previousYearSales)+'</td><td>'+fmtMoney(total.currentYearSales)+'</td>' +
+      '<td>'+fmtPct(total.salesChange)+'</td><td></td>' +
+      '<td>'+fmtAchieve(total.achievementPct)+'</td></tr>';
+
+    document.getElementById("uawso-pagination").innerHTML =
+      '<span>Page ' + state.page + ' of ' + totalPages + ' (' + sorted.length + ' rows)</span>' +
+      '<span><button id="pg-prev" ' + (state.page<=1?'disabled':'') + '>Prev</button> ' +
+      '<button id="pg-next" ' + (state.page>=totalPages?'disabled':'') + '>Next</button></span>';
+    var prevBtn = document.getElementById("pg-prev"), nextBtn = document.getElementById("pg-next");
+    if (prevBtn) prevBtn.onclick = function(){ state.page--; renderTable(rows, total); };
+    if (nextBtn) nextBtn.onclick = function(){ state.page++; renderTable(rows, total); };
+
+    Array.prototype.forEach.call(document.querySelectorAll("#uawso-table th"), function(th){
+      th.classList.remove("sorted-asc","sorted-desc");
+      if (th.getAttribute("data-field") === sortField) th.classList.add(sortDir === "asc" ? "sorted-asc" : "sorted-desc");
+    });
+    state.lastFilteredRows = sorted;
+  }
+
+  function renderCoverageNotes(rows) {
+    var noSales = rows.filter(function(r){ return r.currentYearSales === 0 && r.previousYearSales === 0; }).length;
+    document.getElementById("cov-no-sales").textContent = noSales + " of " + rows.length + " visible rows have zero Sales (both years) for the currently selected period";
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("#uawso-table th"), function(th){
+    th.addEventListener("click", function(){
+      var field = th.getAttribute("data-field");
+      if (!field) return;
+      var curField = document.getElementById("f-sort-field").value;
+      var curDir = document.getElementById("f-sort-dir").value;
+      if (curField === field) document.getElementById("f-sort-dir").value = curDir === "asc" ? "desc" : "asc";
+      else { document.getElementById("f-sort-field").value = field; document.getElementById("f-sort-dir").value = "desc"; }
+      state.page = 1; render();
+    });
+  });
+
+  document.getElementById("f-mode").addEventListener("change", updateModeVisibility);
+  document.getElementById("btn-apply").addEventListener("click", function(){ state.page = 1; render(); });
+  document.getElementById("btn-reset").addEventListener("click", function(){ resetFilters(); state.page = 1; render(); });
+  document.getElementById("btn-csv").addEventListener("click", function(){ downloadCsv(state.lastFilteredRows); });
+
+  function csvEscape(v) {
+    var s = String(v);
+    if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  function downloadCsv(rows) {
+    var headers = ["ASIN","SKU","Row Type","FBM Sales","FBM Orders","FBA Sales","FBA Orders","Vendor Sales","Vendor Units",
+      "PY Sales","CY Sales","Sales Change","Trend","Achievement %"];
+    var lines = [headers.join(",")];
+    var sorted = sortRows(rows);
+    sorted.forEach(function(r){
+      lines.push([
+        r.asin, r.sku, rowTypeLabel(r.rowType),
+        r.fbmSales.toFixed(2), r.fbmOrders, r.fbaSales.toFixed(2), r.fbaOrders,
+        r.vendorSales.toFixed(2), r.vendorUnits,
+        r.previousYearSales.toFixed(2), r.currentYearSales.toFixed(2),
+        r.salesChange === null ? "" : (r.salesChange*100).toFixed(2)+"%",
+        r.trend,
+        r.achievementPct === null ? "" : r.achievementPct.toFixed(2)+"%",
+      ].map(csvEscape).join(","));
+    });
+    var csvContent = lines.join("\r\n");
+    var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var mode = document.getElementById("f-mode").value;
+    a.href = url;
+    a.download = "UAWSO_" + mode + "_" + sorted.length + "rows.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function resetFilters() {
+    document.getElementById("f-mode").value = "MTD";
+    document.getElementById("f-date").value = "";
+    document.getElementById("f-month").value = "";
+    document.getElementById("f-week-start").value = "";
+    document.getElementById("f-week-end").value = "";
+    document.getElementById("f-custom-start").value = "";
+    document.getElementById("f-custom-end").value = "";
+    Object.keys(selectedAsins).forEach(function(k){ delete selectedAsins[k]; });
+    Object.keys(selectedSkus).forEach(function(k){ delete selectedSkus[k]; });
+    asinDropdown.updateCount(); skuDropdown.updateCount();
+    document.getElementById("f-search").value = "";
+    document.getElementById("f-trend").value = "";
+    document.getElementById("f-sort-field").value = "currentYearSales";
+    document.getElementById("f-sort-dir").value = "desc";
+    document.getElementById("f-rows-per-page").value = "50";
+    updateModeVisibility();
+  }
+
+  updateModeVisibility();
+  render();
+})();
+</script>
+
+</body>
+</html>

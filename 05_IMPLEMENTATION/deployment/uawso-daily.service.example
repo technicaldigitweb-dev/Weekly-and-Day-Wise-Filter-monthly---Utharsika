@@ -1,0 +1,22 @@
+# UAWSO daily automation - example systemd service unit. NOT INSTALLED.
+#
+# Documentation only. To deploy (a separate, explicit step):
+#   1. Copy this file to /etc/systemd/system/uawso-daily.service (drop the
+#      .example suffix) and fill in the real absolute path.
+#   2. Copy uawso-daily.timer.example the same way.
+#   3. sudo systemctl daemon-reload
+#   4. sudo systemctl enable --now uawso-daily.timer
+# None of these steps are performed by this task.
+
+[Unit]
+Description=UAWSO daily automation (update-for-today)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/path/to/project/05_IMPLEMENTATION
+ExecStart=/path/to/project/05_IMPLEMENTATION/commands/update_for_today.sh
+# Credentials come from config/.env, loaded by the Python process itself
+# (config.config._load_env_file_if_present) - no credential is set here.
+TimeoutStartSec=1800

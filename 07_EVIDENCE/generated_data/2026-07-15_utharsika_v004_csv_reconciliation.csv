@@ -1,0 +1,8 @@
+metric,html_kpi_total,csv_export_summed_total,match
+Total Sales,718835.91,718835.91,YES
+Total Orders,34454,34454,YES
+Total Quantity,47166,47166,YES
+row_count,1723,1723,YES
+sku_column_present,NO,NO,YES
+image_url_column_present,N/A (image rendered as <img>),YES (Image URL column, plain text),YES
+notes,"CSV export (downloadCsv in uawso_report_template_v5_asin_level.html) and the visible HTML table/KPI cards both derive from the exact same computeRowsV5/computeTotalV5 output - there is no separate CSV code path that recomputes totals independently, so exact reconciliation is a structural guarantee. Independently re-verified here by simulating the CSV row-summation logic in Node.js against the same embedded data and confirming an exact match.",,,

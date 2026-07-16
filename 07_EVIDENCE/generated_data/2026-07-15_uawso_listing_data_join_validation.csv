@@ -1,0 +1,23 @@
+metric,value
+assigned_asins,1723
+join_field_tested,ref_id
+join_field_maid_exists,NO
+join_field_ref_id_exists,YES
+filters_applied,"which_channel=1, market_place='UK', wrong_sku=0"
+matched_any_listing_row_no_wrong_sku_filter,1723
+matched_with_wrong_sku_0_filter,1706
+unmatched_with_wrong_sku_0_filter,17
+trim_or_case_mismatches_found,0
+notes,"wrong_sku=0 is a mandatory filter per the listing_data table's own governance documentation (""Always filter wrong_sku = 0 - bad/duplicate rows exist and will corrupt results""). The prior REQ-01-D03 discovery report did not apply this filter, which is why its image-coverage numbers differ from this validation."
+
+sample_row,asin,ref_id,sku,mapped_sku,wrong_sku,is_parent,is_child,main_image_url
+1,B07WP51SL6,B07WP51SL6,WEBTLSYW A,LSGLBC160AR,0,0,1,https://m.media-amazon.com/images/I/31q5TSKfyzL.jpg
+2,B07YZLMKQK,B07YZLMKQK,LSFTCE R,LSFT220CH+RPR44WH,0,1,0,https://m.media-amazon.com/images/I/419E3J8R1PL.jpg
+3,B084MG7VWS,B084MG7VWS,LAMSSLSNL-SO+RRPTWE,LSSS300SN+RPR44WH,0,0,1,https://m.media-amazon.com/images/I/51CxzFmsD8L.jpg
+4,B084MG7VWS,B084MG7VWS,LSSS300SN+RPR44WH M,LSSS300SN+RPR44WH,0,0,1,https://m.media-amazon.com/images/I/51CxzFmsD8L.jpg
+5,B084RC5DQG,B084RC5DQG,LASGSABL+LSFRYBS,LSGD280AR+SCRN70YB,0,0,1,https://m.media-amazon.com/images/I/51csBjQLC7L.jpg
+6,B084SRKT9H,B084SRKT9H,LAMSSLRD-SO,LSSS300RE+RPR44WH,0,0,1,https://m.media-amazon.com/images/I/31N55b4tB7L.jpg
+7,B084SWSKBF,B084SWSKBF,LAMSSLBK-SO,LSSS300BI+RPR44WH,0,0,1,https://m.media-amazon.com/images/I/31THolgCvWL.jpg
+8,B086YSPMYX,B086YSPMYX,LSFTGBS A,LSGL6016CL,0,0,1,https://m.media-amazon.com/images/I/21BdrXbt-vL.jpg
+9,B08996H95C,B08996H95C,LSLCNBK,LSLC180BM,0,0,1,https://m.media-amazon.com/images/I/21pYBQJ4hDL.jpg
+10,B08999M992,B08999M992,LSLCNBCR,LSLC180BC+RPR44WH,0,0,1,https://m.media-amazon.com/images/I/415RLa1flmL.jpg

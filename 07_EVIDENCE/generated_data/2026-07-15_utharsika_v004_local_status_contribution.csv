@@ -1,0 +1,7 @@
+exact_status,included_or_excluded,source_rows,distinct_order_items,sales,quantity
+Completed,included,33520,33520,656665.53,41152
+Refunded,included,651,651,14931.87,911
+New,included,18,18,309.24,19
+Pending,included,16,16,114.33,18
+Cancelled,excluded,895,895,2115.97,151
+Canceled,excluded,317,317,20.89,80

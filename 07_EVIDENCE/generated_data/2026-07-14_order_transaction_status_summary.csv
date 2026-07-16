@@ -1,0 +1,84 @@
+exact_status,normalized_status,row_count,distinct_order_item_info,distinct_order_id,total_quantity,sum_item_price_times_qty,sum_order_total,earliest_order_date,latest_order_date,distinct_source_names,distinct_fba_sales_values,distinct_ss_name_count
+Completed,completed,1198909,1198909,1097679,1945069,25172631.08,24992022.48,0025-03-19 03:41:54,2026-07-13 14:36:22,"AMAZON;AVASAM;B&Q;BOL;EBAY;ETSY;FAIRE;MANOMANO;MANUAL OM;MANUALORDER;ONBUY;REPLACEMENT;RESEND;SHOPIFY;WAYFAIR","False;True",132
+Refunded,refunded,20108,20108,17555,36770,557308.41,147472.02,2020-09-10 14:56:56,2026-07-11 22:42:36,"AMAZON;AVASAM;B&Q;EBAY;ETSY;MANUAL OM;MANUALORDER;ONBUY;REPLACEMENT;RESEND;SHOPIFY;WAYFAIR","False",47
+Cancelled,cancelled,10632,10632,10024,5452,101849.51,104003.66,0025-11-28 02:36:03,2026-07-13 20:05:41,"AMAZON;AVASAM;B&Q;BOL;EBAY;ETSY;FAIRE;MANUAL OM;MANUALORDER;ONBUY;REPLACEMENT;RESEND;SHOPIFY;WAYFAIR","False",59
+Deleted,deleted,1615,1615,1117,3843,41341.57,41160.65,2022-05-16 00:00:00,2026-06-21 15:58:53,"AMAZON;B&Q;BOL;EBAY;ETSY;FAIRE;MANOMANO;MANUAL OM;MANUALORDER;REPLACEMENT;RESEND;SHOPIFY;WAYFAIR","False",64
+Canceled,canceled,1395,1395,1385,270,88.47,67.58,2024-01-04 21:05:09,2026-07-11 13:09:57,AMAZON,"True",2
+New,new,416,416,363,692,10010.35,10771.30,2026-02-04 16:51:58,2026-07-14 01:06:41,"AMAZON;B&Q;EBAY;REPLACEMENT;SHOPIFY","False",24
+Pending,pending,58,58,50,83,898.49,942.41,2024-03-11 21:43:50,2026-07-12 21:29:28,"AMAZON;MANUAL OM","False;True",3
+Inprogress,inprogress,9,9,8,10,400.72,446.00,2026-07-12 18:26:39,2026-07-13 01:11:16,"AMAZON;EBAY;SHOPIFY","False",4
+Hold,hold,3,3,2,7,145.03,160.01,2026-07-13 10:22:36,2026-07-13 10:35:42,AMAZON,"False",1
+
+# Null status rows: 0
+# Blank ('') status rows: 0
+# Case/spelling-variant check: every normalized_status maps to exactly 1 exact_status variant (no duplicate casings found)
+# Note: 'Completed' and 'Cancelled' earliest_order_date values show an apparent 2-digit-year data anomaly (year 0025 instead of 2025) on at least one row each - flagged as a data-quality observation, not corrected or excluded here (pure discovery, no filtering decision made).
+
+# ===== JUNE 2025 BREAKDOWN (2025-06-01 to 2025-06-30, all users) =====
+period,exact_status,row_count,distinct_order_items,total_quantity,original_sales_value,sum_order_total,source_names
+june_2025,Completed,18174,18174,29130,368856.84,386804.07,"AMAZON;B&Q;EBAY;FAIRE;MANUAL OM;ONBUY;REPLACEMENT;RESEND;SHOPIFY;WAYFAIR"
+june_2025,Refunded,397,397,736,12814.61,3778.93,"AMAZON;EBAY;SHOPIFY"
+june_2025,Cancelled,303,303,139,1543.55,1675.38,"AMAZON;EBAY;REPLACEMENT;SHOPIFY;WAYFAIR"
+june_2025,Canceled,43,43,0,0.00,0.00,AMAZON
+june_2025,Deleted,5,5,18,0.00,0.00,"REPLACEMENT;RESEND"
+
+# ===== JUNE 2025 BY SOURCE =====
+period,exact_status,source_name,row_count,distinct_order_items,total_quantity,original_sales_value,sum_order_total
+june_2025,Canceled,AMAZON,43,43,0,0.00,0.00
+june_2025,Cancelled,AMAZON,270,270,41,707.80,794.94
+june_2025,Cancelled,EBAY,23,23,45,530.22,575.37
+june_2025,Cancelled,REPLACEMENT,4,4,4,0.00,0.00
+june_2025,Cancelled,SHOPIFY,5,5,46,265.06,264.60
+june_2025,Cancelled,WAYFAIR,1,1,3,40.47,40.47
+june_2025,Completed,AMAZON,8069,8069,10605,176574.75,190314.94
+june_2025,Completed,B&Q,63,63,80,762.75,753.72
+june_2025,Completed,EBAY,6167,6167,9452,108528.50,110044.37
+june_2025,Completed,FAIRE,1,1,5,52.00,52.00
+june_2025,Completed,MANUAL OM,9,9,40,559.90,693.81
+june_2025,Completed,ONBUY,4,4,4,31.32,31.32
+june_2025,Completed,REPLACEMENT,299,299,520,0.00,0.00
+june_2025,Completed,RESEND,6,6,43,0.00,0.00
+june_2025,Completed,SHOPIFY,2889,2889,7368,67888.50,70454.76
+june_2025,Completed,WAYFAIR,667,667,1013,14459.12,14459.15
+june_2025,Deleted,REPLACEMENT,3,3,3,0.00,0.00
+june_2025,Deleted,RESEND,2,2,15,0.00,0.00
+june_2025,Refunded,AMAZON,241,241,359,7701.48,1315.42
+june_2025,Refunded,EBAY,72,72,130,1480.99,229.15
+june_2025,Refunded,SHOPIFY,84,84,247,3632.14,2234.36
+
+# ===== JUNE 2026 BREAKDOWN (2026-06-01 to 2026-06-30, all users) =====
+period,exact_status,row_count,distinct_order_items,total_quantity,original_sales_value,sum_order_total,source_names
+june_2026,Completed,18983,18983,30781,424069.77,463471.48,"AMAZON;B&Q;EBAY;MANUAL OM;ONBUY;REPLACEMENT;RESEND;SHOPIFY;WAYFAIR"
+june_2026,Refunded,367,367,627,9381.65,2170.64,"AMAZON;B&Q;EBAY;MANUAL OM;SHOPIFY"
+june_2026,Cancelled,342,342,126,1928.75,2206.95,"AMAZON;B&Q;EBAY;RESEND;SHOPIFY;WAYFAIR"
+june_2026,Canceled,68,68,25,67.58,67.58,AMAZON
+june_2026,Deleted,4,4,6,0.00,0.00,REPLACEMENT
+june_2026,Pending,2,2,3,0.00,15.29,AMAZON
+june_2026,New,2,2,3,0.00,0.00,REPLACEMENT
+
+# ===== JUNE 2026 BY SOURCE =====
+period,exact_status,source_name,row_count,distinct_order_items,total_quantity,original_sales_value,sum_order_total
+june_2026,Canceled,AMAZON,68,68,25,67.58,67.58
+june_2026,Cancelled,AMAZON,306,306,66,1068.66,1337.56
+june_2026,Cancelled,B&Q,7,7,8,170.03,170.03
+june_2026,Cancelled,EBAY,21,21,37,290.32,286.31
+june_2026,Cancelled,RESEND,2,2,4,0.00,0.00
+june_2026,Cancelled,SHOPIFY,5,5,9,373.38,386.69
+june_2026,Cancelled,WAYFAIR,1,1,2,26.36,26.36
+june_2026,Completed,AMAZON,8294,8294,10653,184415.32,219105.84
+june_2026,Completed,B&Q,874,874,1210,20029.14,20029.13
+june_2026,Completed,EBAY,4921,4921,7381,94812.06,95583.33
+june_2026,Completed,MANUAL OM,252,252,547,4946.67,4741.48
+june_2026,Completed,ONBUY,4,4,5,44.79,44.79
+june_2026,Completed,REPLACEMENT,234,234,537,0.00,0.00
+june_2026,Completed,RESEND,7,7,355,0.00,0.00
+june_2026,Completed,SHOPIFY,3835,3835,9258,107082.13,111227.25
+june_2026,Completed,WAYFAIR,562,562,835,12739.66,12739.66
+june_2026,Deleted,REPLACEMENT,4,4,6,0.00,0.00
+june_2026,New,REPLACEMENT,2,2,3,0.00,0.00
+june_2026,Pending,AMAZON,2,2,3,0.00,15.29
+june_2026,Refunded,AMAZON,130,130,175,3324.80,584.34
+june_2026,Refunded,B&Q,4,4,5,83.38,0.00
+june_2026,Refunded,EBAY,140,140,220,2887.17,464.43
+june_2026,Refunded,MANUAL OM,3,3,3,33.73,5.02
+june_2026,Refunded,SHOPIFY,90,90,224,3052.57,1116.85

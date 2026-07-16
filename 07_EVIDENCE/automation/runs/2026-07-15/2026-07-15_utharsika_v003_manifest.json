@@ -1,0 +1,254 @@
+{
+  "run_started_at": "2026-07-15T10:38:26.510899",
+  "mode": "dry-run",
+  "run_date": "2026-07-15",
+  "html_inventory_before": {
+    "2026-07-09_utharsika_v001.html": {
+      "path": "C:\\Users\\LED237\\Documents\\Projects\\Weekly and Day Wise Filter monthly\\09_OUTPUTS\\2026-07-09_utharsika_v001.html",
+      "sha256": "52667eebadb04234f098af67d48d6005402f36e9f4e7b9e7ecdeb0cdc736aa9b",
+      "size": 24464
+    },
+    "2026-07-10_utharsika_v001.html": {
+      "path": "C:\\Users\\LED237\\Documents\\Projects\\Weekly and Day Wise Filter monthly\\09_OUTPUTS\\2026-07-10_utharsika_v001.html",
+      "sha256": "335e65f8e922a052a7cb96def3f63172e21d8b8cb39f4c2a85abdf43a3c4e1c4",
+      "size": 4317186
+    },
+    "2026-07-10_utharsika_v002.html": {
+      "path": "C:\\Users\\LED237\\Documents\\Projects\\Weekly and Day Wise Filter monthly\\09_OUTPUTS\\2026-07-10_utharsika_v002.html",
+      "sha256": "0a7c304ba88cd6acedf26294b1f58d1dc4fe727aff1e93466aa0cb307321ca72",
+      "size": 5427569
+    },
+    "2026-07-14_utharsika_v002.html": {
+      "path": "C:\\Users\\LED237\\Documents\\Projects\\Weekly and Day Wise Filter monthly\\09_OUTPUTS\\2026-07-14_utharsika_v002.html",
+      "sha256": "16f1556aabd5f94af5aa5848ff9d992e2a9d7f0bc84b73934f98ba27fbb82684",
+      "size": 5428696
+    }
+  },
+  "ph_task_rows_before": {
+    "UAWSO-2026-07-14-utharsika-v002": {
+      "id": 237,
+      "sha256": "16f1556aabd5f94af5aa5848ff9d992e2a9d7f0bc84b73934f98ba27fbb82684",
+      "length": 5428684,
+      "updated_at": "2026-07-14 18:01:26.353217+05:30"
+    },
+    "UAWSO-2026-07-10-utharsika-v001": {
+      "id": 157,
+      "sha256": "60bc492f7d46492b9f7eb26eb809bd31c22ef7e4337486f5f7c09ca8e5bb06ff",
+      "length": 5421893,
+      "updated_at": "2026-07-14 15:06:09.792767+05:30"
+    }
+  },
+  "status_discovery": {
+    "discovered": [
+      {
+        "status": "Canceled",
+        "row_count": 1396,
+        "sales": 88.47,
+        "distinct_items": 1396,
+        "quantity": 270
+      },
+      {
+        "status": "Cancelled",
+        "row_count": 10645,
+        "sales": 101902.78,
+        "distinct_items": 10645,
+        "quantity": 5455
+      },
+      {
+        "status": "Completed",
+        "row_count": 1199568,
+        "sales": 25188026.02,
+        "distinct_items": 1199568,
+        "quantity": 1946153
+      },
+      {
+        "status": "Deleted",
+        "row_count": 1615,
+        "sales": 41341.57,
+        "distinct_items": 1615,
+        "quantity": 3843
+      },
+      {
+        "status": "Hold",
+        "row_count": 7,
+        "sales": 188.65,
+        "distinct_items": 7,
+        "quantity": 9
+      },
+      {
+        "status": "Inprogress",
+        "row_count": 23,
+        "sales": 1413.35,
+        "distinct_items": 23,
+        "quantity": 58
+      },
+      {
+        "status": "New",
+        "row_count": 376,
+        "sales": 9476.98,
+        "distinct_items": 376,
+        "quantity": 637
+      },
+      {
+        "status": "Pending",
+        "row_count": 71,
+        "sales": 1071.99,
+        "distinct_items": 71,
+        "quantity": 94
+      },
+      {
+        "status": "Refunded",
+        "row_count": 20145,
+        "sales": 557980.27,
+        "distinct_items": 20145,
+        "quantity": 36851
+      }
+    ],
+    "included": [
+      {
+        "status": "Completed",
+        "row_count": 1199568,
+        "sales": 25188026.02,
+        "distinct_items": 1199568,
+        "quantity": 1946153
+      },
+      {
+        "status": "Deleted",
+        "row_count": 1615,
+        "sales": 41341.57,
+        "distinct_items": 1615,
+        "quantity": 3843
+      },
+      {
+        "status": "Hold",
+        "row_count": 7,
+        "sales": 188.65,
+        "distinct_items": 7,
+        "quantity": 9
+      },
+      {
+        "status": "Inprogress",
+        "row_count": 23,
+        "sales": 1413.35,
+        "distinct_items": 23,
+        "quantity": 58
+      },
+      {
+        "status": "New",
+        "row_count": 376,
+        "sales": 9476.98,
+        "distinct_items": 376,
+        "quantity": 637
+      },
+      {
+        "status": "Pending",
+        "row_count": 71,
+        "sales": 1071.99,
+        "distinct_items": 71,
+        "quantity": 94
+      },
+      {
+        "status": "Refunded",
+        "row_count": 20145,
+        "sales": 557980.27,
+        "distinct_items": 20145,
+        "quantity": 36851
+      }
+    ],
+    "excluded": [
+      {
+        "status": "Canceled",
+        "row_count": 1396,
+        "sales": 88.47,
+        "distinct_items": 1396,
+        "quantity": 270
+      },
+      {
+        "status": "Cancelled",
+        "row_count": 10645,
+        "sales": 101902.78,
+        "distinct_items": 10645,
+        "quantity": 5455
+      }
+    ],
+    "null_count": 0,
+    "blank_count": 0
+  },
+  "new_statuses_since_last_run": [
+    "Completed",
+    "Deleted",
+    "Hold",
+    "Inprogress",
+    "New",
+    "Pending",
+    "Refunded"
+  ],
+  "data_start_date": "2025-01-01",
+  "data_end_date": "2026-07-14",
+  "assigned_scope": {
+    "raw_count": 1723,
+    "distinct_count": 1723,
+    "previous_count": null
+  },
+  "versions_found": [
+    1,
+    2
+  ],
+  "resolved_version": 3,
+  "target_filename": "2026-07-15_utharsika_v003.html",
+  "target_task_id": "UAWSO-2026-07-15-utharsika-v003",
+  "source_row_counts": {
+    "assigned_asins": 1723,
+    "daily_split_rows": 29418,
+    "vendor_period_rows": 961
+  },
+  "validation_gates": {
+    "all_asins_in_master": {
+      "pass": true,
+      "detail": 1723
+    },
+    "no_credential_in_html": {
+      "pass": true,
+      "detail": "checked"
+    },
+    "no_pg_host_in_html": {
+      "pass": true,
+      "detail": "checked"
+    },
+    "no_connection_string": {
+      "pass": true,
+      "detail": "checked"
+    },
+    "no_order_item_info_field": {
+      "pass": true,
+      "detail": "checked"
+    },
+    "has_one_table": {
+      "pass": true,
+      "detail": 1
+    },
+    "has_csv_buttons": {
+      "pass": true,
+      "detail": "checked"
+    },
+    "has_asin_sku_dropdowns": {
+      "pass": true,
+      "detail": "checked"
+    },
+    "no_duplicate_asin_sku_pairs": {
+      "pass": true,
+      "detail": 0
+    },
+    "no_concatenated_skus": {
+      "pass": true,
+      "detail": 0
+    },
+    "no_duplicate_daily_rows": {
+      "pass": true,
+      "detail": 0
+    }
+  },
+  "result": "DRY_RUN_PASS",
+  "dry_run_output_path": "C:\\Users\\LED237\\Documents\\Projects\\Weekly and Day Wise Filter monthly\\09_OUTPUTS\\staging\\DRYRUN_2026-07-15_utharsika_v003.html",
+  "dry_run_sha256": "8be4498d5c7a535abd2bd1dd60ded42c9c803fedfccf5f420863654f367175dd"
+}

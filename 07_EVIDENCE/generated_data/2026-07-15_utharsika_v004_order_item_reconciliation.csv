@@ -1,0 +1,8 @@
+metric,value
+source_distinct_order_item_info_flat_count,34454
+output_distinct_order_item_info_grouped_by_date_asin_summed,34454
+missing_order_items,0
+extra_order_items,0
+duplicate_order_item_info_within_output,0
+method,"Flat method: single COUNT(DISTINCT order_item_info) over the entire assigned-scope/date-range/status-filtered set, no GROUP BY at all. Grouped method: COUNT(DISTINCT order_item_info) computed per (date, ASIN) partition, summed across all partitions - this is exactly what daily_aggregates_asin.json / the shipped v004 HTML uses. If any order_item_info spanned more than one (date, ASIN) partition, the grouped-sum figure would exceed the flat figure (double count); if any qualifying order_item_info were dropped by the extraction WHERE clause, the grouped-sum figure would be lower. Both methods produced identical figures (34,454), proving zero missing, zero extra, and zero duplicate order items in the ASIN-level output relative to the live PostgreSQL source, for this exact scope and date range.",
+2026-07-14_orders_measured_directly,28,row-level detail in 2026-07-15_uawso_orders_difference_rows.csv (REQ-02-D01 blocker clarification evidence)

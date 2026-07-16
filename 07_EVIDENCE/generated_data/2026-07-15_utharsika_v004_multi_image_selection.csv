@@ -1,0 +1,22 @@
+asin,listing_data_id,main_image_url,rn,selection_status
+B018OUTQ84,460325,https://m.media-amazon.com/images/I/31KiO6Ct1dL.jpg,1,SELECTED (lowest id)
+B018OUTQ84,962802,https://m.media-amazon.com/images/I/51bpBwG6dVL.jpg,2,not selected
+B072R5FSMB,457212,https://m.media-amazon.com/images/I/41qJGAUHnDL.jpg,1,SELECTED (lowest id)
+B072R5FSMB,960000,https://m.media-amazon.com/images/I/41J5B8SC6SL.jpg,2,not selected
+B075XQNZBL,460307,https://m.media-amazon.com/images/I/31xwr+5Xw6L.jpg,1,SELECTED (lowest id)
+B075XQNZBL,838285,https://m.media-amazon.com/images/I/319Vqbywe1L.jpg,2,not selected
+B075Z4Z5XG,457089,https://m.media-amazon.com/images/I/61tugODkHYL.jpg,1,SELECTED (lowest id)
+B075Z4Z5XG,839533,https://m.media-amazon.com/images/I/51dyZdHB9rL.jpg,2,not selected
+B079M3V5NQ,459993,https://m.media-amazon.com/images/I/418PP4N1MVL.jpg,1,SELECTED (lowest id)
+B079M3V5NQ,460313,https://m.media-amazon.com/images/I/61JA9CGeRaL.jpg,2,not selected
+B079Z8W7FF,455347,https://m.media-amazon.com/images/I/51uzJw7sBHL.jpg,1,SELECTED (lowest id)
+B079Z8W7FF,457634,https://m.media-amazon.com/images/I/71yOy+5wQCL.jpg,2,not selected
+B07B26JKDT,457453,https://m.media-amazon.com/images/I/51-1DVo55IL.jpg,1,SELECTED (lowest id)
+B07B26JKDT,839793,https://m.media-amazon.com/images/I/51-1DVo55IL.jpg,2,not selected
+B07B26JKDT,883884,https://m.media-amazon.com/images/I/41PsV2wynFL.jpg,3,not selected
+B07B2WVRJ5,460170,https://m.media-amazon.com/images/I/41Ga56zG07L.jpg,1,SELECTED (lowest id)
+B07B2WVRJ5,919232,https://m.media-amazon.com/images/I/51fynHzMyoL.jpg,2,not selected
+summary_total_multi_image_asins,227,,,
+summary_max_distinct_images,3,,,
+summary_max_listing_rows,6,,,
+summary_note,"Sample of 8 multi-image ASINs (17 candidate rows) shown above; full 227-ASIN set not enumerated here for brevity - the selection rule (ROW_NUMBER() OVER (PARTITION BY ref_id ORDER BY id ASC) = 1) is deterministic and re-verified reproducible across two separate runs in this session (see test #10 in test_uawso_client_engine_v5.js).",,,

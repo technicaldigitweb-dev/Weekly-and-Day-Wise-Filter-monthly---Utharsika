@@ -1,0 +1,14 @@
+metric,postgresql_direct_sql,html_embedded_engine_v5,match
+scope,"assigned ASINs (1723), UK, AMAZON+REPLACEMENT, 2025-01-01 to 2026-07-14, dynamic status rule",same,--
+FBM Sales,unknown_not_isolated_separately,487541.07,see_note
+FBA Sales,unknown_not_isolated_separately,184479.90,see_note
+Amazon Sales (FBM+FBA),672020.97,672020.97,YES
+Vendor Sales,46814.94,46814.94,YES
+Total Sales,718835.91,718835.91,YES
+Total Orders,34454,34454,YES
+FBM+FBA Quantity,42418,42418,YES
+Vendor Units,4748,4748,YES
+Total Quantity,47166,47166,YES
+row_count,1723 (assigned ASINs),1723,YES
+duplicate_asin_rows,0,0,YES
+notes,"PostgreSQL direct-SQL figures were computed independently via mcp postgres tool queries against the live database. HTML-embedded-engine figures were computed by loading the ACTUAL data embedded in 09_OUTPUTS\2026-07-15_utharsika_v004.html into Node.js and running the exact same src/uawso_client_engine.js functions the browser uses (Engine.buildCanonicalRowsV5 / sumRangeByAsinV5 / computeRowsV5 / computeTotalV5) - not a hand re-derivation. FBM/FBA Sales split was not independently re-queried as a separate PostgreSQL figure in this validation pass (only the combined Amazon Sales figure was cross-checked), since the split is a presentation-only breakdown of the same underlying rows already reconciled at the Amazon Sales level.",,,

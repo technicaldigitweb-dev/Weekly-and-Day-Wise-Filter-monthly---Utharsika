@@ -1,0 +1,19 @@
+label,value,source
+34413_source_file,07_EVIDENCE\2026-07-14_utharsika_v002_DYNAMIC_STATUS_FINAL_BUILD_AND_PUBLICATION.md (line 62),documented
+34413_date_range,2025-01-01 to 2026-07-13 inclusive,documented
+34413_published_to,tech_team_outputs.ph_task id=237 (task_id UAWSO-2026-07-14-utharsika-v002),documented
+34454_source_file,03_DISCOVERY\2026-07-15_uawso_REQ-01-D03_image_and_asin_orders_discovery.md (Section 8),documented
+34454_date_range,2025-01-01 to 2026-07-14 inclusive,documented
+,,
+fresh_reproduction_orders_thru_2026-07-13,34426,measured today (2026-07-15) using identical scope/status/date-range logic as the 34413 baseline
+fresh_reproduction_orders_thru_2026-07-14,34454,measured today - matches the discovery report's 34454 exactly
+fresh_reproduction_orders_on_2026-07-14_only,28,measured today - mechanically proven via row-level query, see orders_difference_rows.csv
+,,
+gap_34454_minus_34413,41,total observed gap between the two historical figures
+gap_explained_by_date_range_growth,28,"mechanically proven: real order_item_info activity recorded for 2026-07-14 alone"
+gap_remaining_unexplained,13,"34426 (fresh, same date range as 34413) minus 34413 (historical) - cannot be attributed to date range, grouping method, or a reproducible logic difference"
+,,
+method_check_grouped_sum_vs_flat_distinct_thru_0713,34426 both methods agree,"confirms today's data has zero SKU-partition double-counting for this range - the SKU-summed and true-ASIN-grouped methods are equivalent right now"
+,,
+classification,PARTIALLY_EXPLAINED - NOT_FULLY_COMPARABLE_FROM_AVAILABLE_EVIDENCE,"28 of 41 orders are mechanically traced to date-range growth; the remaining 13 cannot be explained from currently available evidence (no snapshot exists of the assigned-ASIN scope or order_transaction state as of 2026-07-14's extraction run). Do not invent a row-level cause for the 13."
+plausible_untested_causes_for_remaining_13,"(a) order_transaction rows backfilled/added for dates on or before 2026-07-13 sometime after the 2026-07-14 extraction ran (live table, not snapshotted); (b) assigned-ASIN scope (public.ph_cate_products) changed between 2026-07-14 and 2026-07-15 (also a live, unsnapshotted table)",neither cause is proven - listed as candidates only

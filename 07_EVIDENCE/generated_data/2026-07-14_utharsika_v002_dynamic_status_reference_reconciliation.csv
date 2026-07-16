@@ -1,0 +1,13 @@
+row_num,asin,supplied_sku,mapped_sku,ref_2025_sales,new_sales,ref_2025_orders,new_orders,ref_2026_sales,new_2026_sales,ref_2026_orders,new_2026_orders,mapped_sku_2026_sales,mapped_sku_2026_orders,match_method,pass_fail
+1,B084RC5DQG,LASGSABL+LSFRYBS,LSGD280AR+SCRN70YB,0.00,0.00,0,0,0.00,0.00,0,0,0.00,0,MATCH1_EXACT,PASS
+2,B0GY3G4S1F,LSGL7512CL3PK+RPM40WH3PK,LSGL1275CL3PK+RPM40WH3PK,0.00,0.00,0,0,21.89,0.00,1,0,21.89,1,MAPPED_SKU_MATCH_ONLY,MAPPED_SKU_MATCH_ONLY
+3,B0GY423LQJ,LSGL9015CL2PK+RPM40WH2PK,,0.00,0.00,0,0,25.78,25.78,2,2,N/A,N/A,MATCH1_EXACT,PASS
+4,B0H38YJTN8,LSGL9015GY2PK+RPM40WH2PK,,0.00,0.00,0,0,94.45,94.45,4,4,N/A,N/A,MATCH1_EXACT,PASS
+5,B0H393YSKV,LSGL9015GY3PK+RPM40WH3PK,,0.00,0.00,0,0,57.78,57.78,2,2,N/A,N/A,MATCH1_EXACT,PASS
+6,B0H3918NPV,LSGL9015GY5PK+RPM40WH5PK,,0.00,0.00,0,0,45.89,45.89,1,1,N/A,N/A,MATCH1_EXACT,PASS
+7,B0D9Q142ZZ,LSGLBC150CO2PK,LSGLBG145AR+RPM40WH,0.00,0.00,0,0,0.00,0.00,0,0,0.00,0,MATCH1_EXACT,PASS
+
+# Result identical to the two prior dynamic-status builds - 6 of 7 rows PASS exactly, row 2 remains a
+# documented MAPPED_SKU_MATCH_ONLY case (supplied SKU has zero transactions system-wide; the mapped SKU
+# is the only SKU with real transaction history for this ASIN). Validation only - the generated dataset
+# was never restricted to these 7 rows.

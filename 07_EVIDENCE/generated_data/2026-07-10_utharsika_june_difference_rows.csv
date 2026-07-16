@@ -1,0 +1,21 @@
+dimension,group_value,row_count,distinct_order_item,sales_gbp,excluded_by_current_filter,notes
+status,Completed,1856,1856,36843.88,NO,Included - approved status filter
+status,Cancelled,49,49,195.20,YES,Excluded by order_status='Completed' filter
+status,Refunded,35,35,40.98,YES,Excluded by order_status='Completed' filter
+status,Canceled (single-L variant),7,7,0.00,YES,Excluded; distinct status string from 'Cancelled'; zero Sales impact
+marketplace,UK,1856,1856,36843.88,NO,Included - approved marketplace filter
+marketplace,Germany,224,224,5285.16,YES,Excluded by market_place='UK' filter
+marketplace,Italy,75,75,2592.57,YES,Excluded by market_place='UK' filter
+marketplace,France,45,45,1364.32,YES,Excluded by market_place='UK' filter
+marketplace,Ireland,43,43,1274.73,YES,Excluded by market_place='UK' filter
+marketplace,Sweden,2,2,861.98,YES,Excluded by market_place='UK' filter
+marketplace,Spain,7,7,255.48,YES,Excluded by market_place='UK' filter
+marketplace,Netherlands,2,2,187.25,YES,Excluded by market_place='UK' filter
+marketplace,Belgium,2,2,119.60,YES,Excluded by market_place='UK' filter
+marketplace,Canada,1,1,42.93,YES,Excluded by market_place='UK' filter
+source,AMAZON (source=1),1856,1856,36843.88,NO,Included - approved source filter
+source,REPLACEMENT (source=11),8,8,0.00,YES,Excluded by source_name='AMAZON' filter; zero Sales value on all 8 rows
+account,amazon Dcvoltage,-,1056,20662.29,NO,Included - no account-level exclusion applied
+account,amazon Ledsone,-,799,16166.30,NO,Included - no account-level exclusion applied
+account,amazon SRM Amazon,-,1,15.29,NO,Included - no account-level exclusion applied
+vendor,Vendor (public.vendor_sales),13 rows,N/A,4302.96,NO,Included separately as Vendor Sales; 528 Vendor Units (never combined with FBM/FBA Orders)

@@ -1,0 +1,20 @@
+metric_type,variant,label,value,diff_from_target,business_meaning,evidence_support
+Sales,A,Current UAWSO Sales (FBM+FBA Completed Amazon UK + Vendor),41146.84,-936.12,Approved current filter set,Directly reproduced this session
+Sales,B,Sales + tax,NOT_SUPPORTED_BY_SCHEMA,N/A,order_transaction has no tax/VAT column; order_total is the only monetary total field,"Column inventory: order_item_info, order_id, item_id, asin, product_id, sku, item_price, quantity, order_status, order_date, order_total, order_sub_source, ss_name, source, source_name, market_place, fba_sales, category_id, category_name, user_id, user_name - no tax field present"
+Sales,C,Sales + shipping,NOT_SUPPORTED_BY_SCHEMA,N/A,order_transaction has no shipping/postage revenue column; blos.local_postage/international_postage are carrier RATE CARDS (no order ID or ASIN),"Confirmed via information_schema.columns; postage tables have no order-level or ASIN-level linkage"
+Sales,D,Sales + shipping + tax,NOT_SUPPORTED_BY_SCHEMA,N/A,Both components unsupported individually,See B and C
+Sales,E,Gross Sales before refunds (all statuses + Vendor),41383.02,-699.94,Includes Cancelled+Refunded+Canceled rows as if not returned,Reproduced this session from status_breakdown_june2025
+Sales,F,Sales including refunded/returned rows only (Completed+Refunded + Vendor),41187.82,-895.14,Treats Refunded rows as still counted; excludes Cancelled/Canceled,Reproduced this session
+Sales,G,Sales including replacements,41146.84,-936.12,"Replacement rows carry GBP0.00 order_total (re-verified: 8 rows, 8 distinct orders, GBP0.00 total, 9 units) - zero Sales impact",Reproduced this session; replacement rows re-verified individually
+Sales,H1,Vendor Sales included (current),41146.84,-936.12,Vendor Sales correctly included once per ASIN,Reproduced; matches deployed HTML exactly (GBP4302.96)
+Sales,H2,Vendor Sales excluded,36843.88,-5239.08,FBM+FBA only; moves further from target,Reproduced this session
+Orders,A,Distinct order IDs,1783,-629,"COUNT(DISTINCT order_id); lower than current Orders figure - wrong direction, one order_id can span multiple order_item_info rows",Reproduced this session
+Orders,B,Distinct order-item IDs (current UAWSO definition),1856,-556,Approved current Orders definition,Reproduced this session
+Orders,C,Distinct shipment IDs,NOT_AVAILABLE,N/A,No shipment ID column exists anywhere in order_transaction or any related table,Confirmed via column inventory and database-wide object search
+Orders,D,Row count,1856,-556,Identical to distinct order-item count at current grain (1 row = 1 order item),Reproduced this session
+Orders,E,Sum quantity,2325,-87,Units shipped, not order count; conflates single orders with quantity>1,Reproduced this session
+Orders,F,True Vendor Orders,VENDOR_ORDER_COUNT_NOT_AVAILABLE_FROM_CURRENT_DATABASE,N/A,No valid Vendor order key exists in this database (see vendor_order_candidates.csv),Full database-wide object and column search completed this session
+Orders,G,FBM/FBA Orders + true Vendor Orders,NOT_COMPUTABLE,N/A,Depends on variant F which is unavailable,N/A
+Orders,H,FBM/FBA Orders + Vendor order lines (row count = 13; explicitly NOT a true order count),1869,-543,"Informational only - Vendor row count (13) is an ASIN-period aggregate count, not an order count; provided for transparency only, not proposed as a valid Orders definition",Reproduced this session; explicitly disclaimed per task instruction not to substitute Vendor Units/rows for Orders without evidence
+Orders,I,FBM/FBA Orders + replacements,1864,-548,"8 replacement orders re-verified (distinct order_id count = 8); replacements are zero-value goodwill resends, not new Sales-generating orders",Reproduced this session
+Orders,J,FBM/FBA Orders + shipment count,NOT_AVAILABLE,N/A,No shipment count column/table exists,Confirmed via column inventory and database-wide object search

@@ -1,0 +1,16 @@
+row_num,asin,supplied_sku,mapped_sku,ref_2025_sales,new_v002_2025_sales,ref_2025_orders,new_v002_2025_orders,ref_2026_sales,new_v002_2026_sales,ref_2026_orders,new_v002_2026_orders,mapped_sku_2026_sales,mapped_sku_2026_orders,status_contributions,sales_diff_2026,orders_diff_2026,changed_vs_prior_rule,match_method,pass_fail
+1,B084RC5DQG,LASGSABL+LSFRYBS,LSGD280AR+SCRN70YB,0.00,0.00,0,0,0.00,0.00,0,0,0.00,0,none (no transactions in June for any of the 3 candidate SKUs),0.00,0,NO,MATCH1_EXACT,PASS
+2,B0GY3G4S1F,LSGL7512CL3PK+RPM40WH3PK,LSGL1275CL3PK+RPM40WH3PK,0.00,0.00,0,0,21.89,0.00,1,0,21.89,1,Completed only (1 row),0.00,0,NO,MAPPED_SKU_MATCH_ONLY,MAPPED_SKU_MATCH_ONLY
+3,B0GY423LQJ,LSGL9015CL2PK+RPM40WH2PK,,0.00,0.00,0,0,25.78,25.78,2,2,N/A,N/A,Completed only (2 rows),0.00,0,NO,MATCH1_EXACT,PASS
+4,B0H38YJTN8,LSGL9015GY2PK+RPM40WH2PK,,0.00,0.00,0,0,94.45,94.45,4,4,N/A,N/A,Completed only (4 rows); no Refunded/Deleted/New/Pending/Inprogress/Hold rows for this exact SKU,0.00,0,NO,MATCH1_EXACT,PASS
+5,B0H393YSKV,LSGL9015GY3PK+RPM40WH3PK,,0.00,0.00,0,0,57.78,57.78,2,2,N/A,N/A,Completed only (2 rows),0.00,0,NO,MATCH1_EXACT,PASS
+6,B0H3918NPV,LSGL9015GY5PK+RPM40WH5PK,,0.00,0.00,0,0,45.89,45.89,1,1,N/A,N/A,Completed only (1 row),0.00,0,NO,MATCH1_EXACT,PASS
+7,B0D9Q142ZZ,LSGLBC150CO2PK,LSGLBG145AR+RPM40WH,0.00,0.00,0,0,0.00,0.00,0,0,0.00,0,none (all real activity for this ASIN falls Nov 2024-Feb 2025, outside both June windows, under a third unrelated SKU),0.00,0,NO,MATCH1_EXACT,PASS
+
+# Summary: the seven-status rule change (adding Deleted/New/Pending/Inprogress/Hold to both Sales and Orders,
+# and adding Refunded/Deleted/New/Pending/Inprogress/Hold to Orders) produced ZERO change for all 7 reference
+# rows. None of these 7 ASINs have any transaction under Deleted, New, Pending, Inprogress, or Hold status in
+# either June 2025 or June 2026. The rule change is therefore NEUTRAL for this specific reference file - it
+# neither improves nor worsens agreement. Row 2 remains the sole MAPPED_SKU_MATCH_ONLY case, unchanged from
+# the prior (Completed+Refunded only) rule, for the same reason documented previously (the supplied SKU has
+# zero transactions system-wide; the mapped SKU is the only SKU with real transaction history for this ASIN).

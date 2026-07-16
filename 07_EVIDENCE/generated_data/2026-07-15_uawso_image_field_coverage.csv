@@ -1,0 +1,55 @@
+metric,value
+assigned_asins,1723
+asins_with_zero_valid_listing_row,17
+asins_with_at_least_one_blank_image_row,8
+asins_with_ALL_rows_blank_image_ie_truly_no_image,7
+asins_with_no_image_total,24 (17 + 7)
+asins_with_exactly_one_distinct_image,1472
+asins_with_multiple_distinct_images,227
+max_distinct_images_for_one_asin,3
+max_listing_rows_for_one_asin,6
+deterministic_tie_break_field_available,NO (image_pos and image_id are NULL on all Amazon which_channel=1 rows sampled)
+deterministic_fallback_candidate,"listing_data.id (bigint primary key) - lowest id per ASIN is mechanically deterministic but not yet business-approved"
+
+list,zero_valid_listing_row_asins (17)
+1,B08TLZQRH5
+2,B08XNSM6GD
+3,B097KBBBPK
+4,B0BW4NG3GP
+5,B0CB89CBCQ
+6,B0CBC1GDL6
+7,B0CBC2P2F2
+8,B0CS9PCNSX
+9,B0DC49S375
+10,B0DDH33FJJ
+11,B0DDTH18X8
+12,B0GLZ4SY9Q
+13,B0GMP89W89
+14,B0GMRH36DQ
+15,B0GTY7S581
+16,B0GTYJCJYT
+17,B0H394ZWB5
+
+list,all_rows_blank_image_asins_truly_no_image (7)
+1,B08THMMJ84
+2,B0BX441NG5
+3,B0CVQ31WVH
+4,B0F1MNQMG7
+5,B0F1MPRGYR
+6,B0F1MR6F3P
+7,B0F3NPV8P9
+
+list_note,"The 8th ASIN with a blank-image row (B0GTYMPTZG) is NOT in the no-image list: it has 2 listing_data rows, one blank (id=984324) and one with a valid main_image_url (id=1006508), so a usable image exists for it. Verified by direct row-level query - not an unresolved discrepancy."
+
+sample,multi_image_asins_top10_by_row_count,row_count,distinct_nonblank_images
+1,B0D7ZRWBS2,4,3
+2,B0DZWTSN68,3,3
+3,B0C3ZT6D5G,3,3
+4,B0CZNPJGMM,3,3
+5,B08THHV6J7,3,3
+6,B0DPMS12HM,3,3
+7,B08X4FY3V5,3,3
+8,B093T47DB9,3,3
+9,B08NXMD5D7,3,3
+10,B0DZWTY6WK,3,3
+note,"227 total multi-image ASINs exist; only the top 10 by row count are sampled here, not the full list."

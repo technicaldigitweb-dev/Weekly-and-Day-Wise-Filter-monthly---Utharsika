@@ -1,0 +1,25 @@
+period,metric,value,notes
+June 2025,FBM Sales,0.00,No transactions exist yet - first transaction for this exact pair is 2025-10-26
+June 2025,FBM Orders,0,Same as above
+June 2025,FBA Sales,0.00,Same as above
+June 2025,FBA Orders,0,Same as above
+June 2025,Tax amount,NOT_SUPPORTED_BY_SCHEMA,order_transaction has no tax/VAT column
+June 2025,Shipping amount,NOT_SUPPORTED_BY_SCHEMA,order_transaction has no shipping/postage column
+June 2025,Refund/return amount,0.00,No rows of any status exist in this period for this pair
+June 2025,Replacement rows,0,No REPLACEMENT-source rows for this pair in this period
+June 2025,Shipment count,NOT_AVAILABLE,No shipment ID column/table exists
+June 2025,True Vendor Orders (ASIN level),VENDOR_ORDER_COUNT_NOT_AVAILABLE_FROM_CURRENT_DATABASE,No valid Vendor order key exists in database
+June 2025,Vendor Sales (ASIN level),0.00,"Zero vendor_sales rows exist for ASIN B0FX2QT3B1, any period, ever"
+June 2025,Vendor Units (ASIN level),0,Same as above - not allocated to the SKU
+June 2026,FBM Sales,699.76,21 Completed rows; source=AMAZON; marketplace=UK
+June 2026,FBM Orders,21,Distinct order_item_info = distinct order_id = 21 (no split orders)
+June 2026,FBA Sales,0.00,fba_sales=false on all 21 rows
+June 2026,FBA Orders,0,Same as above
+June 2026,Tax amount,NOT_SUPPORTED_BY_SCHEMA,order_transaction has no tax/VAT column
+June 2026,Shipping amount,NOT_SUPPORTED_BY_SCHEMA,order_transaction has no shipping/postage column
+June 2026,Refund/return amount,0.00,1 Refunded row (2026-06-04) + 3 Cancelled rows (2026-06-21/29 x2) all carry order_total=0.00
+June 2026,Replacement rows,0,No REPLACEMENT-source rows for this exact SKU in this period (the separate SKU RPR44WH had 1 REPLACEMENT row on 2026-06-13, GBP0.00, but that is a different SKU under the same ASIN and is excluded from this exact-pair check)
+June 2026,Shipment count,NOT_AVAILABLE,No shipment ID column/table exists
+June 2026,True Vendor Orders (ASIN level),VENDOR_ORDER_COUNT_NOT_AVAILABLE_FROM_CURRENT_DATABASE,No valid Vendor order key exists in database
+June 2026,Vendor Sales (ASIN level),0.00,"Zero vendor_sales rows exist for ASIN B0FX2QT3B1, any period, ever"
+June 2026,Vendor Units (ASIN level),0,Same as above - not allocated to the SKU

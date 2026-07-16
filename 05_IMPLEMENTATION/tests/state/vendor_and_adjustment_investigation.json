@@ -1,0 +1,289 @@
+{
+  "vendor_june2025": [
+    {
+      "vendor_row_count": 13,
+      "vendor_distinct_asins": 13,
+      "vendor_units": "528",
+      "vendor_sales": 4302.960000000001,
+      "min_start": "2025-06-01 00:00:00",
+      "max_end": "2025-07-01 00:00:00"
+    }
+  ],
+  "vendor_june2026": [
+    {
+      "vendor_row_count": 37,
+      "vendor_distinct_asins": 33,
+      "vendor_units": "41",
+      "vendor_sales": 571.4200000000001,
+      "min_start": "2026-06-03 15:00:00",
+      "max_end": "2026-06-30 16:00:00"
+    }
+  ],
+  "vendor_id_key_test": [
+    {
+      "total_rows": 960,
+      "non_null_id": 960,
+      "distinct_id": 960
+    }
+  ],
+  "order_transaction_columns": [
+    {
+      "column_name": "order_item_info",
+      "data_type": "bigint"
+    },
+    {
+      "column_name": "order_id",
+      "data_type": "text"
+    },
+    {
+      "column_name": "item_id",
+      "data_type": "text"
+    },
+    {
+      "column_name": "asin",
+      "data_type": "text"
+    },
+    {
+      "column_name": "product_id",
+      "data_type": "text"
+    },
+    {
+      "column_name": "sku",
+      "data_type": "text"
+    },
+    {
+      "column_name": "item_price",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "quantity",
+      "data_type": "bigint"
+    },
+    {
+      "column_name": "order_status",
+      "data_type": "text"
+    },
+    {
+      "column_name": "order_date",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "order_total",
+      "data_type": "double precision"
+    },
+    {
+      "column_name": "order_sub_source",
+      "data_type": "bigint"
+    },
+    {
+      "column_name": "ss_name",
+      "data_type": "text"
+    },
+    {
+      "column_name": "source",
+      "data_type": "bigint"
+    },
+    {
+      "column_name": "source_name",
+      "data_type": "text"
+    },
+    {
+      "column_name": "market_place",
+      "data_type": "text"
+    },
+    {
+      "column_name": "fba_sales",
+      "data_type": "boolean"
+    },
+    {
+      "column_name": "category_id",
+      "data_type": "bigint"
+    },
+    {
+      "column_name": "category_name",
+      "data_type": "text"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "bigint"
+    },
+    {
+      "column_name": "user_name",
+      "data_type": "text"
+    }
+  ],
+  "status_breakdown_june2025": [
+    {
+      "order_status": "Canceled",
+      "row_count": 7,
+      "distinct_order_item": 7,
+      "sales": 0.0,
+      "positive_sales": 0.0,
+      "negative_sales": 0.0
+    },
+    {
+      "order_status": "Cancelled",
+      "row_count": 49,
+      "distinct_order_item": 49,
+      "sales": 195.2,
+      "positive_sales": 195.2,
+      "negative_sales": 0.0
+    },
+    {
+      "order_status": "Completed",
+      "row_count": 1856,
+      "distinct_order_item": 1856,
+      "sales": 36843.880000000136,
+      "positive_sales": 36843.880000000136,
+      "negative_sales": 0.0
+    },
+    {
+      "order_status": "Refunded",
+      "row_count": 35,
+      "distinct_order_item": 35,
+      "sales": 40.980000000000004,
+      "positive_sales": 40.980000000000004,
+      "negative_sales": 0.0
+    }
+  ],
+  "replacement_rows_june2025": [
+    {
+      "order_id": "Repla-204-4399556-4259563",
+      "order_item_info": 907145,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 1,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Dcvoltage_amazon",
+      "order_date": "2025-06-01 13:53:17"
+    },
+    {
+      "order_id": "Repla-202-0170396-7817920",
+      "order_item_info": 910550,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 1,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Dcvoltage_amazon",
+      "order_date": "2025-06-01 19:17:00"
+    },
+    {
+      "order_id": "Repla-203-7457476-4745933",
+      "order_item_info": 904129,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 2,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Dcvoltage_amazon",
+      "order_date": "2025-06-02 14:12:38"
+    },
+    {
+      "order_id": "Repla-205-3803516-8113931",
+      "order_item_info": 908295,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 1,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Dcvoltage_amazon",
+      "order_date": "2025-06-09 22:02:49"
+    },
+    {
+      "order_id": "Repla-206-8479936-4349918",
+      "order_item_info": 912112,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 1,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Dcvoltage_amazon",
+      "order_date": "2025-06-14 15:49:42"
+    },
+    {
+      "order_id": "Repla-202-4449777-8028320",
+      "order_item_info": 950133,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 1,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Dcvoltage_amazon",
+      "order_date": "2025-06-22 10:22:04"
+    },
+    {
+      "order_id": "Repla-204-1435526-4315506",
+      "order_item_info": 921715,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 1,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Dcvoltage_amazon",
+      "order_date": "2025-06-27 16:53:28"
+    },
+    {
+      "order_id": "Repla-204-1484159-4996363",
+      "order_item_info": 918872,
+      "order_status": "Completed",
+      "order_total": 0.0,
+      "quantity": 1,
+      "source_name": "REPLACEMENT",
+      "market_place": "UK",
+      "ss_name": "amazon Ledsone_amazon",
+      "order_date": "2025-06-27 18:14:22"
+    }
+  ],
+  "replacement_summary_june2025": [
+    {
+      "row_count": 8,
+      "distinct_orders": 8,
+      "sales": 0.0,
+      "quantity": "9"
+    }
+  ],
+  "distinct_key_counts_june2025": [
+    {
+      "distinct_order_id": 1783,
+      "distinct_order_item": 1856,
+      "shipped_quantity_proxy": "2325",
+      "row_count": 1856
+    }
+  ],
+  "pair_june2025": [],
+  "pair_june2026": [
+    {
+      "order_status": "Cancelled",
+      "row_count": 3,
+      "distinct_order_item": 3,
+      "distinct_order_id": 3,
+      "sales": 0.0,
+      "quantity": "0",
+      "any_fba": false,
+      "source_name": "AMAZON"
+    },
+    {
+      "order_status": "Completed",
+      "row_count": 21,
+      "distinct_order_item": 21,
+      "distinct_order_id": 21,
+      "sales": 699.7599999999999,
+      "quantity": "24",
+      "any_fba": false,
+      "source_name": "AMAZON"
+    },
+    {
+      "order_status": "Refunded",
+      "row_count": 1,
+      "distinct_order_item": 1,
+      "distinct_order_id": 1,
+      "sales": 0.0,
+      "quantity": "1",
+      "any_fba": false,
+      "source_name": "AMAZON"
+    }
+  ],
+  "pair_vendor_check": []
+}
